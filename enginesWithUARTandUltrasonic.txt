@@ -107,26 +107,33 @@ int main(void)
   LPUART1_transmit_string("Input character to echo...\n\r"); /* Transmit char string */
   unsigned char distance;
   for(;;) {
+  		// we map the distance to an interval: 3 means back-up with full speed, 97 means full speed forward, and in the middle nothing happens
 		distance = LPUART1_receive_char();
-		//converted = map_int(state, 0, 5000, 280, 565);
+		if(distance > 97){
+			distance=97;
+		}
+		else if(distance < 3){
+			distance = 3;
+		}
+		converted = map_int(distance, 3, 97, 280, 565);
 		if(distance<20)
 		  {
 			  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 			  PTD->PCOR |= 1<<PTD15;
-			  converted = 281;
+			  //converted = 281;
 		  }
 		  else{
 			  if(distance<50)
 			  {
 				  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 				  PTD->PCOR |= 1<<PTD16;
-				  converted = 422;
+				  //converted = 422;
 			  }
 			  else
 			  {
 				  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 				  PTD->PCOR |= 1<<PTD0;
-				  converted = 564;
+				  //converted = 564;
 			  }
 		}
   }
