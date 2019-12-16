@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-#Progress monitor hint: 5
+#Progress monitor hint: 7
 first : all
 -include ../makefile.init
 
@@ -67,16 +67,16 @@ button.siz \
 all: warning-messages explicit-dependencies button.elf secondary-outputs
 
 # Tool invocations
-button.elf: $(OBJS) C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/button/button/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
+button.elf: $(OBJS) C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/ultrasonic_read/ultrasonic_read/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
 	@echo 'Building target: $@'
-	@echo 'Executing target #6 $@'
+	@echo 'Executing target #8 $@'
 	@echo 'Invoking: Standard S32DS C Linker'
 	arm-none-eabi-gcc -o "button.elf" "@button.args"  $(USER_OBJS_QUOTED) $(LIBS_QUOTED)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 button.siz: $(EXECUTABLES)
-	@echo 'Executing target #7 $@'
+	@echo 'Executing target #9 $@'
 	@echo 'Invoking: Standard S32DS Print Size'
 	arm-none-eabi-size --format=berkeley $(EXECUTABLES)
 	@echo 'Finished building: $@'

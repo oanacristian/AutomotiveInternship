@@ -47,6 +47,7 @@
 
 #include "S32K144.h"            /* include peripheral declarations S32K144 */
 #include "clocks_and_modes.h"
+#include "LPUART.h"
 
 int lpit0_ch0_flag_counter = 0; /* LPIT0 timeout counter */
 
@@ -71,9 +72,20 @@ unsigned long get_clocks_in_microseconds(unsigned int microseconds)
 void PORT_init (void) {
   PCC-> PCCn[PCC_PORTD_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock for PORT D */
 
+  PCC-> PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORT D */
+
+  PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
+  PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
+
+
+//  PCC->PCCn[PCC_PORTB_INDEX ] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+//  PORTB->PCR[14]|=PORT_PCR_MUX(3); /* Port B14: MUX = ALT3, LPSPI1_SCK */
+//  PORTB->PCR[15]|=PORT_PCR_MUX(3); /* Port B15: MUX = ALT3, LPSPI1_SIN */
+//  PORTB->PCR[16]|=PORT_PCR_MUX(3); /* Port B16: MUX = ALT3, LPSPI1_SOUT */
+//  PORTB->PCR[17]|=PORT_PCR_MUX(3); /* Port B17: MUX = ALT3, LPSPI1_PCS3 */
+
   PTD->PDDR &= ~(1<<PTD11);    // Port D11: Data Direction= input (default) */
   PORTD->PCR[11] = 0x00000110; // Port D11: MUX = GPIO, input filter enabled */
-
 
   PTD->PDDR |= 1<<PTD0;       	  /* Port D0:  Data Direction= output */
   PORTD->PCR[PTD0] =   0x00000100;  /* Port D0:  MUX = ALT1, GPIO (to blue LED on EVB) */
@@ -120,7 +132,7 @@ void NVIC_init_IRQs (void) {
   S32_NVIC->IP[48] = 0xA0;             /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 }
 
-unsigned int volatile start_time, time, end_time, distance, parity;
+unsigned int volatile start_time, time, end_time, parity, distance;
 
 uint32_t clocks()
 {
@@ -128,6 +140,9 @@ uint32_t clocks()
 }
 
 unsigned int volatile starea = 0;
+
+
+
 
 int main(void) {
   WDOG_disable();        /* Disable WDOG*/
@@ -137,8 +152,11 @@ int main(void) {
   PORT_init();		     /* Init  port clocks and gpio outputs */
   NVIC_init_IRQs();        /* Enable desired interrupts and priorities */
   LPIT0_init();
-//  PTD->PSOR |= 1<<PTD15|1<<PTD16|1<<PTD0;
-  unsigned char last_stateof_D11 = (PTD->PDIR & (1<<PTD11))?1:0;
+  LPUART1_init();
+//  LPSPI1_init_master();    /* Initialize LPSPI 1 as master */
+  PTD->PSOR |= 1<<PTD15|1<<PTD16|1<<PTD0;
+  char last_stateof_D11 = (PTD->PDIR & (1<<PTD11))?1:0;
+
   for (;;) {                     /* Toggle output to LED every LPIT0 timeout */
 
 	  if(!starea)
@@ -154,14 +172,16 @@ int main(void) {
 			  last_stateof_D11=0;
 			  distance = (time / 20) * 0.332;
               distance = distance>200?200:distance;
+
+              LPUART1_transmit_char((unsigned char)distance);
 		  }
 	  }
   }
 }
 
 
-void LPIT0_Ch0_IRQHandler (void) {
 
+void LPIT0_Ch0_IRQHandler (void) {
 	if(starea==0)
 	{
 		LPIT0->TMR[0].TVAL = get_clocks_in_microseconds(10);
@@ -172,23 +192,24 @@ void LPIT0_Ch0_IRQHandler (void) {
 	{
 		PTD->PCOR |= 1<<PTD10;
 		starea=0;
-		if(distance<20)
-		  {
-			  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
-			  PTD->PCOR |= 1<<PTD15;
-		  }
-		  else{
-			  if(distance<50)
-			  {
-				  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
-				  PTD->PCOR |= 1<<PTD16;
-			  }
-			  else
-			  {
-				  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
-				  PTD->PCOR |= 1<<PTD0;
-			  }
-		  }
+				if(distance<20)
+				  {
+					  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+					  PTD->PCOR |= 1<<PTD15;
+				  }
+				  else{
+					  if(distance<50)
+					  {
+						  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+						  PTD->PCOR |= 1<<PTD16;
+					  }
+					  else
+					  {
+						  PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+						  PTD->PCOR |= 1<<PTD0;
+					  }
+				  }
+
 		LPIT0->TMR[0].TVAL = get_clocks_in_milliseconds(61);
 	}
 

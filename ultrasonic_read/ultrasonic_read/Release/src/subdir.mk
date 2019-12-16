@@ -6,33 +6,33 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS_QUOTED += \
-"../src/hello.c" \
+"../src/ultrasonic_read.c" \
 
 C_SRCS += \
-../src/hello.c \
+../src/ultrasonic_read.c \
 
 OBJS_OS_FORMAT += \
-./src/hello.o \
+./src/ultrasonic_read.o \
 
 C_DEPS_QUOTED += \
-"./src/hello.d" \
+"./src/ultrasonic_read.d" \
 
 OBJS += \
-./src/hello.o \
+./src/ultrasonic_read.o \
 
 OBJS_QUOTED += \
-"./src/hello.o" \
+"./src/ultrasonic_read.o" \
 
 C_DEPS += \
-./src/hello.d \
+./src/ultrasonic_read.d \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/hello.o: ../src/hello.c
+src/ultrasonic_read.o: ../src/ultrasonic_read.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #5 $<'
+	@echo 'Executing target #7 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
-	arm-none-eabi-gcc "@src/hello.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "src/hello.o" "$<"
+	arm-none-eabi-gcc "@src/ultrasonic_read.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "src/ultrasonic_read.o" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

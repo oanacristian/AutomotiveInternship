@@ -1,10 +1,12 @@
-"./src/hello.o"
+"./src/ultrasonic_read.o"
 "./include/clocks_and_modes.o"
+"./include/LPUART.o"
+"./include/LPSPI.o"
 "./Project_Settings/Startup_Code/system_S32K144.o"
 "./Project_Settings/Startup_Code/startup_S32K144.o"
 "./Project_Settings/Startup_Code/startup.o"
 -T
-"C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/button/button/Project_Settings/Linker_Files/S32K1xx_flash.ld"
+"C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/ultrasonic_read/ultrasonic_read/Project_Settings/Linker_Files/S32K1xx_flash.ld"
 -Wl,-Map,"button.map"
 -Xlinker
 --gc-sections

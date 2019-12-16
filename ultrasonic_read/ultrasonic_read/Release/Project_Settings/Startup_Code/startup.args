@@ -3,7 +3,7 @@
 -I"C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/arm"
 -I"C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_Runtime/include"
 -I"C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_Runtime/include/arm"
--I"C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/button/button/include"
+-I"C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/ultrasonic_read/ultrasonic_read/include"
 -O3
 -Wall
 -c
