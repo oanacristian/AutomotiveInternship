@@ -21,7 +21,7 @@
 <intAttribute key="com.pemicro.debug.gdbjtag.pne.algorithmIndex" value="0"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.alternativeAlgorithmPath" value=""/>
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.attachToRunning" value="false"/>
-<stringAttribute key="com.pemicro.debug.gdbjtag.pne.customTrimFrequency" value="0"/>
+<intAttribute key="com.pemicro.debug.gdbjtag.pne.customTrimFrequency" value="0"/>
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.cyc_eth.ALWAYS_ERASE" value="false"/>
 <stringAttribute key="com.pemicro.debug.gdbjtag.pne.cyc_eth.CYCLONE_IP" value=""/>
 <booleanAttribute key="com.pemicro.debug.gdbjtag.pne.cyc_eth.DO_RESET_DELAY" value="false"/>

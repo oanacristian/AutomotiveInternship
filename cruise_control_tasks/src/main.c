@@ -15,6 +15,8 @@
 #include "FTM.h"
 #include "clock_time.h"
 #include "stdlib.h"
+#include "FlexCAN.h"
+
 
 #define PTD0 0   /* BLUE LED */
 #define PTD15 15 /* RED LED*/
@@ -34,9 +36,13 @@
 }
 
 void PORT_init (void) {
-  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-  PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
-  PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
+//  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+/*  PORTC->PCR[6]|=PORT_PCR_MUX(2);            Port C6: MUX = ALT2,UART1 TX
+  PORTC->PCR[7]|=PORT_PCR_MUX(2);            Port C7: MUX = ALT2,UART1 RX */
+
+  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  //Enable clock for PORTE
+  PORTE->PCR[4] |= PORT_PCR_MUX(5);  //Port E4: MUX = ALT5, CAN0_RX
+  PORTE->PCR[5] |= PORT_PCR_MUX(5);  //Port E5: MUX = ALT5, CAN0_TX
 
   PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTE */
   PORTE->PCR[8]|=PORT_PCR_MUX(2);           		/* Port E8: MUX = ALT2, FTM0CH6 */
@@ -67,7 +73,7 @@ void PORT_init (void) {
 
  void send_distance()
 {
-	LPUART1_transmit_char(last_distance_in_CMs);
+		FLEXCAN0_transmit_msg_ushort(last_distance_in_CMs);
 }
 
  void turn_on_BLUE_LED(void)
@@ -127,9 +133,9 @@ void init_tasks(void)
 	iterator = (Task*)malloc(sizeof(Task));
 	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&update_lights);
 	add_task(task_head,iterator);
-//	iterator = (Task*)malloc(sizeof(Task));
-//	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&send_distance);
-//	add_task(task_head,iterator);
+	iterator = (Task*)malloc(sizeof(Task));
+	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&send_distance);
+	add_task(task_head,iterator);
 //	go_forward = (Task*)malloc(sizeof(Task));
 //	init_task(go_forward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_forward_PWM);
 //	add_task(task_head,go_forward);
@@ -188,6 +194,7 @@ int main(void)
   pwm_left_right_init(PTD5);
   init_tasks();
   NVIC_init_IRQs();
+  FLEXCAN0_init();         /* Init FlexCAN0 */
   LPIT0_init();
   for(;;) {
 

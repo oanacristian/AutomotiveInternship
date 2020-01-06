@@ -423,4 +423,5 @@
 			<resource resourceType="PROJECT" workspacePath="/cruise_control_tasks"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
