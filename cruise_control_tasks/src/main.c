@@ -146,22 +146,22 @@ void init_tasks(void)
 //	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&send_distance);
 //	add_task(task_head,iterator);
 	go_forward = (Task*)malloc(sizeof(Task));
-	init_task(go_forward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_forward_PWM);
+	init_task(go_forward,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_forward_PWM);
 //	add_task(task_head,go_forward);
 	go_backward = (Task*)malloc(sizeof(Task));
-	init_task(go_backward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_backward_PWM);
+	init_task(go_backward,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_backward_PWM);
 //	add_task(task_head,go_backward);
 	turn_left = (Task*)malloc(sizeof(Task));
-	init_task(turn_left,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_left_PWM);
+	init_task(turn_left,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_left_PWM);
 //	add_task(task_head,turn_left);
 	turn_right= (Task*)malloc(sizeof(Task));
-	init_task(turn_right,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_right_PWM);
+	init_task(turn_right,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_right_PWM);
 //	add_task(task_head,turn_right);
-	forward_backward_stay = (Task*)malloc(sizeof(Task));
-	init_task(forward_backward_stay,0U,get_clocks_in_microseconds_80MHZ(5U),&forward_backward_stay_PWM);
+//	forward_backward_stay = (Task*)malloc(sizeof(Task));
+//	init_task(forward_backward_stay,0U,get_clocks_in_microseconds_80MHZ(20U),&forward_backward_stay_PWM);
 
 	center_stay = (Task*)malloc(sizeof(Task));
-	init_task(center_stay,0U,get_clocks_in_microseconds_80MHZ(5U),&left_right_stay_PWM);
+	init_task(center_stay,0U,get_clocks_in_microseconds_80MHZ(20U),&left_right_stay_PWM);
 }
 
 void NVIC_init_IRQs (void) {
@@ -178,7 +178,7 @@ void LPIT0_init (void) {
                               /* SW_RST=0: SW reset does not reset timer chans, regs */
                            /* M_CEN=1: enable module clk (allows writing other LPIT0 regs)*/
   LPIT0->MIER = 0x00000001;   /* TIE0=1: Timer Interrupt Enabled fot Chan 0 */
-  LPIT0->TMR[0].TVAL = get_clocks_in_microseconds_80MHZ(5U);    /* Chan 0 Timeout period: 40M clocks */
+  LPIT0->TMR[0].TVAL = get_clocks_in_microseconds_80MHZ(20U);    /* Chan 0 Timeout period: 40M clocks */
   LPIT0->TMR[0].TCTRL = 0x00000001; /* T_EN=1: Timer channel is enabled */
                               /* CHAIN=0: channel chaining is disabled */
                               /* MODE=0: 32 periodic counter mode */

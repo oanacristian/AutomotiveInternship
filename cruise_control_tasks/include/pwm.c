@@ -21,7 +21,7 @@ void pwm_left_right_init(int port)
 void motor_forward_PWM()
 {
 	static int counter = 0;
-	if(counter<235)
+	if(counter<1000)
 	{
 		 PTD->PSOR |= 1<<FORWARD_BACKWARD_PORT;
 	}
@@ -36,7 +36,7 @@ void motor_forward_PWM()
 void forward_backward_stay_PWM()
 {
 	static int counter = 0;
-	if(counter<344)
+	if(counter<750)
 	{
 		 PTD->PSOR |= 1<<LEFT_RIGHT_PORT;
 	}
@@ -51,7 +51,7 @@ void forward_backward_stay_PWM()
 void motor_backward_PWM()
 {
 	static int counter = 0;
-	if(counter<438)
+	if(counter<500)
 	{
 		 PTD->PSOR |= 1<<FORWARD_BACKWARD_PORT;
 	}
@@ -66,7 +66,7 @@ void motor_backward_PWM()
 void left_right_stay_PWM()
 {
 	static int counter = 0;
-	if(counter<300)
+	if(counter<750)
 	{
 		 PTD->PSOR |= 1<<LEFT_RIGHT_PORT;
 	}
@@ -81,7 +81,7 @@ void left_right_stay_PWM()
 void motor_left_PWM()
 {
 	static int counter = 0;
-	if(counter<220)
+	if(counter<1000)
 	{
 		 PTD->PSOR |= 1<<LEFT_RIGHT_PORT;
 	}
@@ -96,7 +96,7 @@ void motor_left_PWM()
 void motor_right_PWM()
 {
 	static int counter = 0;
-	if(counter<380)
+	if(counter<500)
 	{
 		 PTD->PSOR |= 1<<LEFT_RIGHT_PORT;
 	}
