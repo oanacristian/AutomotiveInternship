@@ -10,7 +10,7 @@
 "./Project_Settings/Startup_Code/startup_S32K144.o"
 "./Project_Settings/Startup_Code/startup.o"
 -T
-"C:/Users/oana.cristian/workspaceS32DS.ARM.2018.R1/GitRepository/cruise_control_tasks/Project_Settings/Linker_Files/S32K1xx_flash.ld"
+"C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/Project_Settings/Linker_Files/S32K1xx_flash.ld"
 -Wl,-Map,"cruise_control_tasks.map"
 -Xlinker
 --gc-sections

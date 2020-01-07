@@ -4,12 +4,13 @@
 "./include/clocks_and_modes.o"
 "./include/LPUART.o"
 "./include/HC_SR04.o"
+"./include/FlexCAN.o"
 "./include/FTM.o"
 "./Project_Settings/Startup_Code/system_S32K144.o"
 "./Project_Settings/Startup_Code/startup_S32K144.o"
 "./Project_Settings/Startup_Code/startup.o"
 -T
-"C:/Users/egon.osvath/workspaceS32DS.ARM.2018.R1/cruise_control_tasks/cruise_control_tasks/Project_Settings/Linker_Files/S32K1xx_flash.ld"
+"C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/Project_Settings/Linker_Files/S32K1xx_flash.ld"
 -Wl,-Map,"cruise_control_tasks.map"
 -Xlinker
 --gc-sections

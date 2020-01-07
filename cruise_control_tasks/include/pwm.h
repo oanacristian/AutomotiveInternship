@@ -23,6 +23,9 @@ void motor_left_PWM();
 
 void motor_right_PWM();
 
+void forward_backward_stay_PWM();
+
+void  left_right_stay_PWM();
 
 
 #endif /* PWM_H_ */

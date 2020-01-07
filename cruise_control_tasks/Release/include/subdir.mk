@@ -7,6 +7,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS_QUOTED += \
 "../include/FTM.c" \
+"../include/FlexCAN.c" \
 "../include/HC_SR04.c" \
 "../include/LPUART.c" \
 "../include/clocks_and_modes.c" \
@@ -15,6 +16,7 @@ C_SRCS_QUOTED += \
 
 C_SRCS += \
 ../include/FTM.c \
+../include/FlexCAN.c \
 ../include/HC_SR04.c \
 ../include/LPUART.c \
 ../include/clocks_and_modes.c \
@@ -23,6 +25,7 @@ C_SRCS += \
 
 OBJS_OS_FORMAT += \
 ./include/FTM.o \
+./include/FlexCAN.o \
 ./include/HC_SR04.o \
 ./include/LPUART.o \
 ./include/clocks_and_modes.o \
@@ -31,6 +34,7 @@ OBJS_OS_FORMAT += \
 
 C_DEPS_QUOTED += \
 "./include/FTM.d" \
+"./include/FlexCAN.d" \
 "./include/HC_SR04.d" \
 "./include/LPUART.d" \
 "./include/clocks_and_modes.d" \
@@ -39,6 +43,7 @@ C_DEPS_QUOTED += \
 
 OBJS += \
 ./include/FTM.o \
+./include/FlexCAN.o \
 ./include/HC_SR04.o \
 ./include/LPUART.o \
 ./include/clocks_and_modes.o \
@@ -47,6 +52,7 @@ OBJS += \
 
 OBJS_QUOTED += \
 "./include/FTM.o" \
+"./include/FlexCAN.o" \
 "./include/HC_SR04.o" \
 "./include/LPUART.o" \
 "./include/clocks_and_modes.o" \
@@ -55,6 +61,7 @@ OBJS_QUOTED += \
 
 C_DEPS += \
 ./include/FTM.d \
+./include/FlexCAN.d \
 ./include/HC_SR04.d \
 ./include/LPUART.d \
 ./include/clocks_and_modes.d \
@@ -71,9 +78,17 @@ include/FTM.o: ../include/FTM.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-include/HC_SR04.o: ../include/HC_SR04.c
+include/FlexCAN.o: ../include/FlexCAN.c
 	@echo 'Building file: $<'
 	@echo 'Executing target #5 $<'
+	@echo 'Invoking: Standard S32DS C Compiler'
+	arm-none-eabi-gcc "@include/FlexCAN.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "include/FlexCAN.o" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+include/HC_SR04.o: ../include/HC_SR04.c
+	@echo 'Building file: $<'
+	@echo 'Executing target #6 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@include/HC_SR04.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "include/HC_SR04.o" "$<"
 	@echo 'Finished building: $<'
@@ -81,7 +96,7 @@ include/HC_SR04.o: ../include/HC_SR04.c
 
 include/LPUART.o: ../include/LPUART.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #6 $<'
+	@echo 'Executing target #7 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@include/LPUART.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "include/LPUART.o" "$<"
 	@echo 'Finished building: $<'
@@ -89,7 +104,7 @@ include/LPUART.o: ../include/LPUART.c
 
 include/clocks_and_modes.o: ../include/clocks_and_modes.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #7 $<'
+	@echo 'Executing target #8 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@include/clocks_and_modes.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "include/clocks_and_modes.o" "$<"
 	@echo 'Finished building: $<'
@@ -97,7 +112,7 @@ include/clocks_and_modes.o: ../include/clocks_and_modes.c
 
 include/pwm.o: ../include/pwm.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #8 $<'
+	@echo 'Executing target #9 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@include/pwm.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "include/pwm.o" "$<"
 	@echo 'Finished building: $<'
@@ -105,7 +120,7 @@ include/pwm.o: ../include/pwm.c
 
 include/tasks.o: ../include/tasks.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #9 $<'
+	@echo 'Executing target #10 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@include/tasks.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "include/tasks.o" "$<"
 	@echo 'Finished building: $<'

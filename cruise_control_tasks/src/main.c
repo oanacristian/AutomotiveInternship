@@ -92,36 +92,6 @@ void WDOG_disable (void){
   WDOG->CS = 0x00002100;    /* Disable watchdog */
 }
 
-void update_lights(void)
-{
-	if(last_distance_in_CMs<30)
-	  {
-		  turn_off_all_LEDs();
-		  turn_on_RED_LED();
-		  remove_task(task_head,go_forward);
-		  remove_task(task_head,forward_backward_stay);
-		  add_task(task_head,go_backward);
-	  }
-	  else{
-		  if(last_distance_in_CMs<80)
-		  {
-
-			  turn_off_all_LEDs();
-			  turn_on_GREEN_LED();
-			  remove_task(task_head,go_backward);
-			  remove_task(task_head,go_forward);
-			  add_task(task_head,forward_backward_stay);
-		  }
-		  else
-		  {
-			  remove_task(task_head,go_backward);
-			  remove_task(task_head,forward_backward_stay);
-			  add_task(task_head,go_forward);
-			  turn_off_all_LEDs();
-			  turn_on_BLUE_LED();
-		  }
-	}
-}
 
 Task* task_head;
 Task* iterator;
@@ -131,6 +101,38 @@ Task* forward_backward_stay;
 Task* center_stay;
 Task* turn_left;
 Task* turn_right;
+
+
+void update_lights(void)
+{
+	if(last_distance_in_CMs<30)
+	  {
+		  turn_off_all_LEDs();
+		  turn_on_RED_LED();
+		  remove_task(task_head,turn_right);
+		  remove_task(task_head,center_stay);
+		  add_task(task_head,turn_left);
+	  }
+	  else{
+		  if(last_distance_in_CMs<80)
+		  {
+
+			  turn_off_all_LEDs();
+			  turn_on_GREEN_LED();
+			  remove_task(task_head,turn_left);
+			  remove_task(task_head,turn_right);
+			  add_task(task_head,center_stay);
+		  }
+		  else
+		  {
+			  remove_task(task_head,turn_left);
+			  remove_task(task_head,center_stay);
+			  add_task(task_head,turn_right);
+			  turn_off_all_LEDs();
+			  turn_on_BLUE_LED();
+		  }
+	}
+}
 
 
 void init_tasks(void)
