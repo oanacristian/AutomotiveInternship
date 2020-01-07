@@ -30,7 +30,7 @@ void execute_task(Task*);
 
 void set_next(Task*, Task*);
 void add_task(Task* head, Task* new_task);
-void remove_similar_tasks(Task*,void (*task_functions_address)());
+void remove_task(Task*,Task*);
 
 
 #endif /* TASKS_H_ */

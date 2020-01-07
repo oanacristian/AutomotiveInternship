@@ -15,8 +15,6 @@
 #include "FTM.h"
 #include "clock_time.h"
 #include "stdlib.h"
-#include "FlexCAN.h"
-
 
 #define PTD0 0   /* BLUE LED */
 #define PTD15 15 /* RED LED*/
@@ -36,13 +34,9 @@
 }
 
 void PORT_init (void) {
-//  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-/*  PORTC->PCR[6]|=PORT_PCR_MUX(2);            Port C6: MUX = ALT2,UART1 TX
-  PORTC->PCR[7]|=PORT_PCR_MUX(2);            Port C7: MUX = ALT2,UART1 RX */
-
-  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  //Enable clock for PORTE
-  PORTE->PCR[4] |= PORT_PCR_MUX(5);  //Port E4: MUX = ALT5, CAN0_RX
-  PORTE->PCR[5] |= PORT_PCR_MUX(5);  //Port E5: MUX = ALT5, CAN0_TX
+  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+  PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
+  PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
 
   PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTE */
   PORTE->PCR[8]|=PORT_PCR_MUX(2);           		/* Port E8: MUX = ALT2, FTM0CH6 */
@@ -73,7 +67,7 @@ void PORT_init (void) {
 
  void send_distance()
 {
-		FLEXCAN0_transmit_msg_ushort(last_distance_in_CMs);
+	LPUART1_transmit_char(last_distance_in_CMs);
 }
 
  void turn_on_BLUE_LED(void)
@@ -104,15 +98,25 @@ void update_lights(void)
 	  {
 		  turn_off_all_LEDs();
 		  turn_on_RED_LED();
+		  remove_task(task_head,go_forward);
+		  remove_task(task_head,forward_backward_stay);
+		  add_task(task_head,go_backward);
 	  }
 	  else{
 		  if(last_distance_in_CMs<80)
 		  {
+
 			  turn_off_all_LEDs();
 			  turn_on_GREEN_LED();
+			  remove_task(task_head,go_backward);
+			  remove_task(task_head,go_forward);
+			  add_task(task_head,forward_backward_stay);
 		  }
 		  else
 		  {
+			  remove_task(task_head,go_backward);
+			  remove_task(task_head,forward_backward_stay);
+			  add_task(task_head,go_forward);
 			  turn_off_all_LEDs();
 			  turn_on_BLUE_LED();
 		  }
@@ -123,8 +127,11 @@ Task* task_head;
 Task* iterator;
 Task* go_forward;
 Task* go_backward;
+Task* forward_backward_stay;
+Task* center_stay;
 Task* turn_left;
 Task* turn_right;
+
 
 void init_tasks(void)
 {
@@ -133,21 +140,26 @@ void init_tasks(void)
 	iterator = (Task*)malloc(sizeof(Task));
 	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&update_lights);
 	add_task(task_head,iterator);
-	iterator = (Task*)malloc(sizeof(Task));
-	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&send_distance);
-	add_task(task_head,iterator);
-//	go_forward = (Task*)malloc(sizeof(Task));
-//	init_task(go_forward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_forward_PWM);
+//	iterator = (Task*)malloc(sizeof(Task));
+//	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&send_distance);
+//	add_task(task_head,iterator);
+	go_forward = (Task*)malloc(sizeof(Task));
+	init_task(go_forward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_forward_PWM);
 //	add_task(task_head,go_forward);
-//	go_backward = (Task*)malloc(sizeof(Task));
-//	init_task(go_backward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_backward_PWM);
+	go_backward = (Task*)malloc(sizeof(Task));
+	init_task(go_backward,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_backward_PWM);
 //	add_task(task_head,go_backward);
-//	turn_left = (Task*)malloc(sizeof(Task));
-//	init_task(turn_left,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_left_PWM);
+	turn_left = (Task*)malloc(sizeof(Task));
+	init_task(turn_left,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_left_PWM);
 //	add_task(task_head,turn_left);
-//	turn_right= (Task*)malloc(sizeof(Task));
-//	init_task(turn_right,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_right_PWM);
+	turn_right= (Task*)malloc(sizeof(Task));
+	init_task(turn_right,0U,get_clocks_in_microseconds_80MHZ(5U),&motor_right_PWM);
 //	add_task(task_head,turn_right);
+	forward_backward_stay = (Task*)malloc(sizeof(Task));
+	init_task(forward_backward_stay,0U,get_clocks_in_microseconds_80MHZ(5U),&forward_backward_stay_PWM);
+
+	center_stay = (Task*)malloc(sizeof(Task));
+	init_task(center_stay,0U,get_clocks_in_microseconds_80MHZ(5U),&left_right_stay_PWM);
 }
 
 void NVIC_init_IRQs (void) {
@@ -194,7 +206,6 @@ int main(void)
   pwm_left_right_init(PTD5);
   init_tasks();
   NVIC_init_IRQs();
-  FLEXCAN0_init();         /* Init FlexCAN0 */
   LPIT0_init();
   for(;;) {
 

@@ -52,7 +52,15 @@ void add_task(Task* head,Task* new_task)
 	{
 		while(iterator->next)
 		{
+			if(iterator==new_task) // task already in list
+			{
+				return;
+			}
 			iterator=iterator->next;
+		}
+		if(iterator==new_task) // last task already in list
+		{
+			return;
 		}
 		iterator->next = new_task;
 		new_task->next = NULL;
@@ -68,9 +76,9 @@ void set_next(struct Task* task, struct Task* next_task)
 	task->next=next_task;
 }
 
-void remove_similar_tasks(Task* head,  void (*task_functions_address)())
+void remove_task(Task* head,  Task* removable)
 {
-	if(head->task_function_pointer==task_functions_address)
+	if(head==removable)
 	{
 		head = head->next;
 		return;
@@ -78,7 +86,7 @@ void remove_similar_tasks(Task* head,  void (*task_functions_address)())
 	Task* iterator = head;
 	while(iterator->next)
 	{
-		if(iterator->next->task_function_pointer==task_functions_address)
+		if(iterator->next==removable)
 		{
 			iterator->next = iterator->next->next;
 		}
