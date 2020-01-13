@@ -218,13 +218,13 @@ int main(void)
 	  if(bt == 'f')
 	  {
 		  mode = 0;
-		  FLEXCAN0_transmit_msg_ushort(bt);
+//		  FLEXCAN0_transmit_msg_ushort(bt);
 
 	  }
 	  if(bt == 'e')
 	  {
 		  mode = 1;
-		  FLEXCAN0_transmit_msg_ushort(bt);
+//		  FLEXCAN0_transmit_msg_ushort(bt);
 
 	  }
 	  if(mode==1)
@@ -237,7 +237,7 @@ int main(void)
 void LPIT0_Ch0_IRQHandler (void) {
 	read_distance();
 	update_lights();
-	if(!mode)
+	if(mode==0)
 	{
 		send_distance();
 	}

@@ -658,16 +658,16 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
                 0x00000474       0x48 ./src/main.o
                 0x00000474                LPIT0_init
  .text.PORT_init
-                0x000004bc       0xb0 ./src/main.o
+                0x000004bc       0xc4 ./src/main.o
                 0x000004bc                PORT_init
  .text.WDOG_disable
-                0x0000056c       0x2c ./src/main.o
-                0x0000056c                WDOG_disable
+                0x00000580       0x2c ./src/main.o
+                0x00000580                WDOG_disable
  .text.NVIC_init_IRQs
-                0x00000598       0x2c ./src/main.o
-                0x00000598                NVIC_init_IRQs
- .text.main     0x000005c4      0x17c ./src/main.o
-                0x000005c4                main
+                0x000005ac       0x2c ./src/main.o
+                0x000005ac                NVIC_init_IRQs
+ .text.main     0x000005d8      0x168 ./src/main.o
+                0x000005d8                main
  .text.LPIT0_Ch0_IRQHandler
                 0x00000740       0xbc ./src/main.o
                 0x00000740                LPIT0_Ch0_IRQHandler
@@ -927,13 +927,13 @@ OUTPUT(FlexCAN_s32k145_Receiver.elf elf32-littlearm)
  .debug_macro   0x0000fc19       0x22 ./Project_Settings/Startup_Code/system_S32K144.o
  .debug_macro   0x0000fc3b       0xea ./Project_Settings/Startup_Code/startup.o
 
-.debug_line     0x00000000      0xd1e
- .debug_line    0x00000000      0x338 ./src/main.o
- .debug_line    0x00000338      0x1f9 ./include/clocks_and_modes.o
- .debug_line    0x00000531      0x22b ./include/FlexCAN.o
- .debug_line    0x0000075c      0x2bd ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_line    0x00000a19       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
- .debug_line    0x00000a9c      0x282 ./Project_Settings/Startup_Code/startup.o
+.debug_line     0x00000000      0xd21
+ .debug_line    0x00000000      0x33b ./src/main.o
+ .debug_line    0x0000033b      0x1f9 ./include/clocks_and_modes.o
+ .debug_line    0x00000534      0x22b ./include/FlexCAN.o
+ .debug_line    0x0000075f      0x2bd ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_line    0x00000a1c       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
+ .debug_line    0x00000a9f      0x282 ./Project_Settings/Startup_Code/startup.o
 
 .debug_str      0x00000000    0x62a3d
  .debug_str     0x00000000    0x5dfcf ./src/main.o

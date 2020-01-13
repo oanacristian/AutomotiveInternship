@@ -217,12 +217,13 @@ void PORT_init (void) {
   PORTD->PCR[PTD15] =  0x00000100;  /* Port D15: MUX = GPIO */
   PORTD->PCR[PTD16] =  0x00000100;  /* Port D16: MUX = GPIO */
   PORTD->PCR[PTD10] =  0x00000100;  /* Port D16: MUX = GPIO */
+  PORTD->PCR[PTD11] =  0x00000100;  /* Port D16: MUX = GPIO */
 
   PTD->PDDR |= 1<<PTD0;       	  /* Port D0:  Data Direction= output */
   PTD->PDDR |= 1<<PTD15;          /* Port D15: Data Direction= output */
   PTD->PDDR |= 1<<PTD16;          /* Port D16: Data Direction= output */
   PTD->PDDR |= 1<<PTD10;
-
+  PTD->PDDR |= 1<<PTD11;
   /* Enable clocks to peripherals (PORT modules) */
  PCC-> PCCn[PCC_PORTC_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock to PORT C */
 
@@ -268,7 +269,7 @@ int main(void)
 		  if ((CAN0->IFLAG1 >> 4) & 1) {  /* If CAN 0 MB 4 flag is set (received msg), read MB4 */
 			  recieve_char = FLEXCAN0_receive_msg ();      /* Read message */
 
-			if(mode == 1){
+//			if(mode == 1){
 			switch(recieve_char)
 			{
 			case 'd':
@@ -279,7 +280,7 @@ int main(void)
 					}
 					else
 						pwmSteering = 665;
-					PTD->PCOR |= 1<<PTD15;
+//					PTD->PCOR |= 1<<PTD15;
 				}
 				break;
 			case 'b':
@@ -290,7 +291,7 @@ int main(void)
 					}
 					else
 						pwmSteering = 330;
-					PTD->PCOR |= 1<<PTD16;
+//					PTD->PCOR |= 1<<PTD16;
 				}
 				break;
 			case 'a':
@@ -301,7 +302,8 @@ int main(void)
 							}
 							else
 								pwmSpeed = 610;
-							PTD->PCOR |= 1<<PTD15;  /* Turn on LED red */
+							PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+							PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
 						}
 						break;
 			case 'c':
@@ -312,7 +314,9 @@ int main(void)
 							}
 							else
 								pwmSpeed = 310;
-							PTD->PCOR |= 1<<PTD16;  /* Turn on LED green */
+
+							PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+							PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
 						}
 						break;
 			default :
@@ -320,18 +324,18 @@ int main(void)
 					pwmSpeed = 460;
 					pwmSteering = 480;
 					PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
-					PTD->PCOR |= 1<<PTD0;
+					PTD->PCOR |= 1<<PTD16;
 				}
 			}
-			}
-			if(recieve_char == 'f')
-			{
-				mode = 0;
-			}
-			if(recieve_char == 'e')
-			{
-				mode = 1;
-			}
+//			}
+//			if(recieve_char == 'f')
+//			{
+//				mode = 0;
+//			}
+//			if(recieve_char == 'e')
+//			{
+//				mode = 1;
+//			}
 		  }
   }
 }
@@ -356,18 +360,6 @@ void LPIT0_Ch0_IRQHandler (void) {
     else{
   	  PTD->PCOR |= 1<<PTD11;
     }
-
-//  if(parity<convertedPTC2)
-//    {
-//  	  PTD->PCOR |=  1<<PTD16;
-//  	  PTD->PSOR |= 1<<PTD0 | 1<< PTD15;
-//  	  PTD->PSOR |= 1<<PTD11; /* Turn on all LEDs */
-//    }
-//
-//    else{
-//  	  PTD->PSOR |= 1<<PTD0 | 1<< PTD15 | 1<<PTD16; /* Turn off all LEDs */
-//  	  PTD->PCOR |= 1<<PTD11; /* Turn on all LEDs */
-//    }
   parity%=5000;
 
 }
