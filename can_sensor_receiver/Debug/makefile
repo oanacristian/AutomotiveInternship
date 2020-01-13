@@ -16,6 +16,7 @@ RM := rm -rf
 -include subdir.mk
 -include Project_Settings/Linker_Files/subdir.mk
 -include Project_Settings/Startup_Code/subdir.mk
+-include include/subdir.mk
 -include src/subdir.mk
 -include objects.mk
 
@@ -66,7 +67,7 @@ FlexCAN_s32k145_Receiver.siz \
 all: warning-messages explicit-dependencies FlexCAN_s32k145_Receiver.elf secondary-outputs
 
 # Tool invocations
-FlexCAN_s32k145_Receiver.elf: $(OBJS) C:/Users/oana.cristian/workspaceS32DS.ARM.2018.R1/FlexCAN_s32k145_Receiver/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
+FlexCAN_s32k145_Receiver.elf: $(OBJS) C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Executing target #9 $@'
 	@echo 'Invoking: Standard S32DS C Linker'

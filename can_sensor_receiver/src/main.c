@@ -249,7 +249,7 @@ int main(void)
   SPLL_init_160MHz();    /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
   NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
   PORT_init();		     /* Init  port clocks and gpio outputs */
-  ADC_init();            /* Init ADC resolution 12 bit*/
+//  ADC_init();            /* Init ADC resolution 12 bit*/
   NVIC_init_IRQs();        /* Enable desired interrupts and priorities */
   FLEXCAN0_init();          //Init FlexCAN0
 //  LPIT0_init();

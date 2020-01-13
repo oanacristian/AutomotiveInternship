@@ -67,7 +67,7 @@ cruise_control_tasks.siz \
 all: warning-messages explicit-dependencies cruise_control_tasks.elf secondary-outputs
 
 # Tool invocations
-cruise_control_tasks.elf: $(OBJS) C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
+cruise_control_tasks.elf: $(OBJS) C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_sensor_read/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Executing target #12 $@'
 	@echo 'Invoking: Standard S32DS C Linker'

@@ -3,7 +3,7 @@
 -I"C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/arm"
 -I"C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_Runtime/include"
 -I"C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_Runtime/include/arm"
--I"C:/Users/oana.cristian/workspaceS32DS.ARM.2018.R1/FlexCAN_s32k145_Receiver/include"
+-I"C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include"
 -x assembler-with-cpp
 -O0
 -g3

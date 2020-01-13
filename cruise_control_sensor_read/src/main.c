@@ -14,6 +14,7 @@
 #include "HC_SR04.h"
 #include "FTM.h"
 #include "clock_time.h"
+#include "FlexCAN.h"
 #include "stdlib.h"
 
 #define PTD0 0   /* BLUE LED */
@@ -42,6 +43,10 @@ void PORT_init (void) {
   PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTE */
   PORTE->PCR[8]|=PORT_PCR_MUX(2);           		/* Port E8: MUX = ALT2, FTM0CH6 */
 
+  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
+  PORTE->PCR[4] |= PORT_PCR_MUX(5); /* Port E4: MUX = ALT5, CAN0_RX */
+  PORTE->PCR[5] |= PORT_PCR_MUX(5); /* Port E5: MUX = ALT5, CAN0_TX */
+
 
   PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTD */
 
@@ -51,10 +56,6 @@ void PORT_init (void) {
   PTD->PDDR &= ~(1<<PTD11);       /* Port D11: Data Direction= input (default) */
   PORTD->PCR[PTD11] = 0x00000110;    /* Port D11: MUX = GPIO, input filter enabled (UltraSonic Sensor Echo)*/
 
-  PTD->PDDR |= 1<<PTD12;       	  /* Port D12:  Data Direction= output */
-  PORTD->PCR[PTD12] =   0x00000100;  /* Port D12:  MUX = ALT1, GPIO (PWM forward backward motor) */
-  PTD->PDDR |= 1<<PTD5;       	  /* Port D0:  Data Direction= output */
-  PORTD->PCR[PTD5] =   0x00000100;  /* Port D0:    MUX = ALT1, GPIO (PWM left_right motor) */
 
   PTD->PDDR |= 1<<PTD0;       	  /* Port D0:  Data Direction= output */
   PORTD->PCR[PTD0] =   0x00000100;  /* Port D0:  MUX = ALT1, GPIO (to blue LED on EVB) */
@@ -67,7 +68,9 @@ void PORT_init (void) {
 }
 
  void send_distance(){
-	LPUART1_transmit_char(last_distance_in_CMs);
+	//LPUART1_transmit_char(last_distance_in_CMs);
+	 FLEXCAN0_transmit_msg_ushort(last_distance_in_CMs);
+
 }
 
  void turn_on_BLUE_LED(void)
@@ -190,12 +193,14 @@ int main(void)
   SPLL_init_160MHz();    /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
   NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
   PORT_init();           /* Configure ports */
-  LPUART1_init();  /* Initialize LPUART @ 9600*/
+  FLEXCAN0_init();
+  //LPUART1_init();  /* Initialize LPUART @ 9600*/
   init_ultrasonic_sensor(PTD10,PTD11);
   NVIC_init_IRQs();
   LPIT0_init();
   for(;;) {
 	  update_lights();
+	  send_distance();
   }
 }
 
@@ -205,5 +210,3 @@ void LPIT0_Ch0_IRQHandler (void) {
 	read_distance();
 	LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 }
-
-
