@@ -198,9 +198,29 @@ int main(void)
   init_ultrasonic_sensor(PTD10,PTD11);
   NVIC_init_IRQs();
   LPIT0_init();
+  unsigned char bt, mode = 1;
   for(;;) {
-	  update_lights();
-	  send_distance();
+	  bt = LPUART1_receive_char();
+	  if(bt == 'f')
+	  {
+		  mode = 0;
+		  continue;
+	  }
+	  if(bt == 'e')
+	  {
+		  mode = 1;
+		  continue;
+	  }
+
+	  if(!mode)
+	  {
+		  send_distance();
+		  update_lights();
+	  }
+	  else
+	  {
+		  send_distance();
+	  }
   }
 }
 
