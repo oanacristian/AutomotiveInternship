@@ -15,4 +15,6 @@
 #define get_clocks_in_microseconds_8MHZ(microseconds) ((microseconds)*(4U))
 
 
+unsigned long long timer;
+
 #endif /* CLOCK_TIME_H_ */

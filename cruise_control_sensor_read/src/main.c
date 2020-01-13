@@ -26,7 +26,8 @@
 #define PTD12 12 //forward backward pwm motor port
 #define PTD5   5 //left right pwm motor port
 
-#define TASK_UPDATE_CLOCK_COUNT get_clocks_in_microseconds_80MHZ(5U)
+#define ULTRASONIC_CLOCK_COUNT get_clocks_in_milliseconds_80MHZ(100U)
+
 
  void turn_off_all_LEDs(void)
 {
@@ -65,8 +66,7 @@ void PORT_init (void) {
 
 }
 
- void send_distance()
-{
+ void send_distance(){
 	LPUART1_transmit_char(last_distance_in_CMs);
 }
 
@@ -109,9 +109,6 @@ void update_lights(void)
 	  {
 		  turn_off_all_LEDs();
 		  turn_on_RED_LED();
-		  remove_task(task_head,turn_right);
-		  remove_task(task_head,center_stay);
-		  add_task(task_head,turn_left);
 	  }
 	  else{
 		  if(last_distance_in_CMs<80)
@@ -119,15 +116,10 @@ void update_lights(void)
 
 			  turn_off_all_LEDs();
 			  turn_on_GREEN_LED();
-			  remove_task(task_head,turn_left);
-			  remove_task(task_head,turn_right);
-			  add_task(task_head,center_stay);
 		  }
 		  else
 		  {
-			  remove_task(task_head,turn_left);
-			  remove_task(task_head,center_stay);
-			  add_task(task_head,turn_right);
+
 			  turn_off_all_LEDs();
 			  turn_on_BLUE_LED();
 		  }
@@ -135,34 +127,35 @@ void update_lights(void)
 }
 
 
-void init_tasks(void)
-{
-	task_head = (Task*)malloc(sizeof(Task));
-	init_task(task_head,0U,get_clocks_in_milliseconds_80MHZ(65U),&read_distance);
-	iterator = (Task*)malloc(sizeof(Task));
-	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&update_lights);
-	add_task(task_head,iterator);
+//void init_tasks(void)
+//{
+//	task_head = (Task*)malloc(sizeof(Task));
+//	init_task(task_head,0U,ULTRASONIC_CLOCK_COUNT,&read_distance);
+//	add_task(task_head,task_head);
 //	iterator = (Task*)malloc(sizeof(Task));
-//	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(65U),&send_distance);
+//	init_task(iterator,0U,ULTRASONIC_CLOCK_COUNT,&update_lights);
 //	add_task(task_head,iterator);
-	go_forward = (Task*)malloc(sizeof(Task));
-	init_task(go_forward,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_forward_PWM);
-//	add_task(task_head,go_forward);
-	go_backward = (Task*)malloc(sizeof(Task));
-	init_task(go_backward,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_backward_PWM);
-//	add_task(task_head,go_backward);
-	turn_left = (Task*)malloc(sizeof(Task));
-	init_task(turn_left,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_left_PWM);
-//	add_task(task_head,turn_left);
-	turn_right= (Task*)malloc(sizeof(Task));
-	init_task(turn_right,0U,get_clocks_in_microseconds_80MHZ(20U),&motor_right_PWM);
-//	add_task(task_head,turn_right);
+////	iterator = (Task*)malloc(sizeof(Task));
+////	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(ULTRASONIC_CLOCK_COUNT),&send_distance);
+////	add_task(task_head,iterator);
+//	go_forward = (Task*)malloc(sizeof(Task));
+//	init_task(go_forward,0U,TASK_UPDATE_CLOCK_COUNT,&motor_forward_PWM);
+////	add_task(task_head,go_forward);
+//	go_backward = (Task*)malloc(sizeof(Task));
+//	init_task(go_backward,0U,TASK_UPDATE_CLOCK_COUNT,&motor_backward_PWM);
+////	add_task(task_head,go_backward);
+//	turn_left = (Task*)malloc(sizeof(Task));
+//	init_task(turn_left,0U,TASK_UPDATE_CLOCK_COUNT,&motor_left_PWM);
+////	add_task(task_head,turn_left);
+//	turn_right= (Task*)malloc(sizeof(Task));
+//	init_task(turn_right,0U,TASK_UPDATE_CLOCK_COUNT,&motor_right_PWM);
+////	add_task(task_head,turn_right);
 //	forward_backward_stay = (Task*)malloc(sizeof(Task));
-//	init_task(forward_backward_stay,0U,get_clocks_in_microseconds_80MHZ(20U),&forward_backward_stay_PWM);
-
-	center_stay = (Task*)malloc(sizeof(Task));
-	init_task(center_stay,0U,get_clocks_in_microseconds_80MHZ(20U),&left_right_stay_PWM);
-}
+//	init_task(forward_backward_stay,0U,TASK_UPDATE_CLOCK_COUNT,&forward_backward_stay_PWM);
+//
+//	center_stay = (Task*)malloc(sizeof(Task));
+//	init_task(center_stay,0U,TASK_UPDATE_CLOCK_COUNT,&left_right_stay_PWM);
+//}
 
 void NVIC_init_IRQs (void) {
   S32_NVIC->ICPR[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
@@ -178,7 +171,7 @@ void LPIT0_init (void) {
                               /* SW_RST=0: SW reset does not reset timer chans, regs */
                            /* M_CEN=1: enable module clk (allows writing other LPIT0 regs)*/
   LPIT0->MIER = 0x00000001;   /* TIE0=1: Timer Interrupt Enabled fot Chan 0 */
-  LPIT0->TMR[0].TVAL = get_clocks_in_microseconds_80MHZ(20U);    /* Chan 0 Timeout period: 40M clocks */
+  LPIT0->TMR[0].TVAL = ULTRASONIC_CLOCK_COUNT;
   LPIT0->TMR[0].TCTRL = 0x00000001; /* T_EN=1: Timer channel is enabled */
                               /* CHAIN=0: channel chaining is disabled */
                               /* MODE=0: 32 periodic counter mode */
@@ -197,37 +190,19 @@ int main(void)
   SPLL_init_160MHz();    /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
   NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
   PORT_init();           /* Configure ports */
-//  LPUART1_init();  /* Initialize LPUART @ 9600*/
-  FTM0_init();
-  FTM0_CH0_OC_init();
-  FTM0_CH1_PWM_init();
-  FTM0_CH6_IC_init();
-  start_FTM0_counter();  /* Start FTM0 counter */
+  LPUART1_init();  /* Initialize LPUART @ 9600*/
   init_ultrasonic_sensor(PTD10,PTD11);
-  pwm_forward_backward_init(PTD12);
-  pwm_left_right_init(PTD5);
-  init_tasks();
   NVIC_init_IRQs();
   LPIT0_init();
   for(;;) {
-
+	  update_lights();
   }
 }
 
-unsigned long long task_counter = 0, timer = 0;
+
 
 void LPIT0_Ch0_IRQHandler (void) {
-	iterator=task_head;
-	timer = task_counter*TASK_UPDATE_CLOCK_COUNT;
-	while(iterator)
-	{
-		if(is_task_ready(iterator,timer))
-		{
-			execute_task(iterator);
-		}
-		iterator=iterator->next;
-	}
-	task_counter++;
+	read_distance();
 	LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 }
 

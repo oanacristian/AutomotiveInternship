@@ -17,7 +17,6 @@ src/main.o: ../src/main.c \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/pwm.h \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/tasks.h \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/HC_SR04.h \
- C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/FTM.h \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/clock_time.h \
  C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/stdlib.h \
  C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/cstdlib \
@@ -61,8 +60,6 @@ C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/in
 C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/tasks.h:
 
 C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/HC_SR04.h:
-
-C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/FTM.h:
 
 C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/cruise_control_tasks/include/clock_time.h:
 
