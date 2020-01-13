@@ -57,7 +57,7 @@ void LPUART1_transmit_string(char data_string[])  {  /* Function to Transmit who
 }
 
 char LPUART1_receive_char(void) {    /* Function to Receive single Char */
-  char recieve;
+  char recieve = 0;
   while((LPUART1->STAT & LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT==0);
                                      /* Wait for received buffer to be full */
   recieve= LPUART1->DATA;            /* Read received data*/

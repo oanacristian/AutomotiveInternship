@@ -40,9 +40,6 @@ void PORT_init (void) {
   PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
   PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
 
-  PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTE */
-  PORTE->PCR[8]|=PORT_PCR_MUX(2);           		/* Port E8: MUX = ALT2, FTM0CH6 */
-
   PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
   PORTE->PCR[4] |= PORT_PCR_MUX(5); /* Port E4: MUX = ALT5, CAN0_RX */
   PORTE->PCR[5] |= PORT_PCR_MUX(5); /* Port E5: MUX = ALT5, CAN0_TX */
@@ -69,9 +66,22 @@ void PORT_init (void) {
 
  void send_distance(){
 	//LPUART1_transmit_char(last_distance_in_CMs);
-	 FLEXCAN0_transmit_msg_ushort(last_distance_in_CMs);
-
-}
+	if(last_distance_in_CMs<30)
+	{
+	FLEXCAN0_transmit_msg_ushort('c');
+	}
+	else
+	{
+	  if(last_distance_in_CMs<80)
+	  {
+		  FLEXCAN0_transmit_msg_ushort(0);
+	  }
+	  else
+	  {
+		  FLEXCAN0_transmit_msg_ushort('a');
+	  }
+	}
+ }
 
  void turn_on_BLUE_LED(void)
 {
@@ -96,14 +106,14 @@ void WDOG_disable (void){
 }
 
 
-Task* task_head;
-Task* iterator;
-Task* go_forward;
-Task* go_backward;
-Task* forward_backward_stay;
-Task* center_stay;
-Task* turn_left;
-Task* turn_right;
+//Task* task_head;
+//Task* iterator;
+//Task* go_forward;
+//Task* go_backward;
+//Task* forward_backward_stay;
+//Task* center_stay;
+//Task* turn_left;
+//Task* turn_right;
 
 
 void update_lights(void)
@@ -185,6 +195,9 @@ void LPIT0_init (void) {
                               /* TRG_SEL=0: Timer chan 0 trigger source is selected*/
 }
 
+volatile char bt;
+volatile char mode;
+
 
 int main(void)
 {
@@ -194,39 +207,39 @@ int main(void)
   NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
   PORT_init();           /* Configure ports */
   FLEXCAN0_init();
-  //LPUART1_init();  /* Initialize LPUART @ 9600*/
+  LPUART1_init();  /* Initialize LPUART @ 9600*/
   init_ultrasonic_sensor(PTD10,PTD11);
   NVIC_init_IRQs();
   LPIT0_init();
-  unsigned char bt, mode = 1;
+  mode=1;
   for(;;) {
 	  bt = LPUART1_receive_char();
+
 	  if(bt == 'f')
 	  {
 		  mode = 0;
-		  continue;
+		  FLEXCAN0_transmit_msg_ushort(bt);
+
 	  }
 	  if(bt == 'e')
 	  {
 		  mode = 1;
-		  continue;
-	  }
+		  FLEXCAN0_transmit_msg_ushort(bt);
 
-	  if(!mode)
-	  {
-		  send_distance();
-		  update_lights();
 	  }
-	  else
+	  if(mode==1)
 	  {
-		  send_distance();
+		  FLEXCAN0_transmit_msg_ushort(bt);
 	  }
   }
 }
 
-
-
 void LPIT0_Ch0_IRQHandler (void) {
 	read_distance();
+	update_lights();
+	if(!mode)
+	{
+		send_distance();
+	}
 	LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 }
