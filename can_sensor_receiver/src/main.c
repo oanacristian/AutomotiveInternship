@@ -98,7 +98,7 @@ int main(void) {
 
 #include "S32K144.h" /* include peripheral declarations S32K144 */
 #include "clocks_and_modes.h"
-#include "FlexCAN.h"
+#include "LPUART.h"
 #include "ADC.h"
 
 #define PTD0 0   	/* BLUE LED */
@@ -126,25 +126,13 @@ int main(void) {
   }
 
 
-// void switch_on_blue_LED()
-//  {
-//  	PTD-> PCOR |= 1<<PTD0;/* Clear Output on port D0 (LED on) */
-//  }
-//
-// void switch_off_blue_LED()
-//  {
-//  	PTD-> PSOR |= 1<<PTD0; /* Set Output on port D0 (LED off) */
-//  }
-//
-// void toggle_blue_LED()
-//  {
-//  	PTD-> PTOR |= 1<<PTD0;
-//  }
 
  int map_int(val,pre_min,pre_max,post_min,post_max)
  {
 	return post_min + ((post_max - post_min) / (pre_max - pre_min)) * (val - pre_min);
  }
+
+
 
 
  void turn_off_all_LEDs(void)
@@ -210,9 +198,9 @@ int main(void) {
 
 void PORT_init (void) {
   PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTD */
-  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  //Enable clock for PORTE
-  PORTE->PCR[4] |= PORT_PCR_MUX(5);  //Port E4: MUX = ALT5, CAN0_RX
-  PORTE->PCR[5] |= PORT_PCR_MUX(5);  //Port E5: MUX = ALT5, CAN0_TX
+//  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  //Enable clock for PORTE
+//  PORTE->PCR[4] |= PORT_PCR_MUX(5);  //Port E4: MUX = ALT5, CAN0_RX
+//  PORTE->PCR[5] |= PORT_PCR_MUX(5);  //Port E5: MUX = ALT5, CAN0_TX
   PORTD->PCR[PTD0]  =  0x00000100;  /* Port D0: MUX = GPIO */
   PORTD->PCR[PTD15] =  0x00000100;  /* Port D15: MUX = GPIO */
   PORTD->PCR[PTD16] =  0x00000100;  /* Port D16: MUX = GPIO */
@@ -225,7 +213,10 @@ void PORT_init (void) {
   PTD->PDDR |= 1<<PTD10;
   PTD->PDDR |= 1<<PTD11;
   /* Enable clocks to peripherals (PORT modules) */
- PCC-> PCCn[PCC_PORTC_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock to PORT C */
+ PCC-> PCCn[PCC_PORTC_INDEX] |=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+ PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
+ PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
+
 
 }
 
@@ -258,15 +249,15 @@ int main(void)
 	  PORT_init();           /* Configure ports */
 	  NVIC_init_IRQs();        /* Enable desired interrupts and priorities */
 	  LPIT0_init();
-	  FLEXCAN0_init();
+//	  FLEXCAN0_init();
 	  parity = 0;
-//	  LPUART1_init();        /* Initialize LPUART @ 9600*/
+	  LPUART1_init();        /* Initialize LPUART @ 9600*/
 	//  LPUART1_transmit_string("Running LPUART example\n\r");     /* Transmit char string */
 	//  LPUART1_transmit_string("Input character to echo...\n\r"); /* Transmit char string */
 	  unsigned char recieve_char;
 	  for(;;) {
-		  if ((CAN0->IFLAG1 >> 4) & 1) {  /* If CAN 0 MB 4 flag is set (received msg), read MB4 */
-			  recieve_char = FLEXCAN0_receive_msg ();      /* Read message */
+
+			  recieve_char = LPUART1_receive_char();      /* Read message */
 
 //			if(mode == 1){
 			switch(recieve_char)
@@ -373,7 +364,7 @@ int main(void)
 					PTD->PCOR |= 1<<PTD16;
 				}
 			}
-		  }
+
   }
 }
 void LPIT0_Ch0_IRQHandler (void) {

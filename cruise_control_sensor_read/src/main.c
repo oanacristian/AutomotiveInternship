@@ -186,6 +186,10 @@ int main(void)
 		  mode = 1;
 
 	  }
+	  if(mode==1)
+      {
+	      FLEXCAN0_transmit_msg_ushort(bt);
+	  }
   }
 }
 
@@ -196,9 +200,6 @@ void LPIT0_Ch0_IRQHandler (void) {
 	{
 		send_distance();
 	}
-	if(mode==1)
-	{
-	  FLEXCAN0_transmit_msg_ushort(LPUART1_receive_char());
-	}
+
 	LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 }

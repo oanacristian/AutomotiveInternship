@@ -13,7 +13,7 @@ src/main.o: ../src/main.c \
  C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/ewl_lib_ext1.h \
  C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/wchar_t.h \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/clocks_and_modes.h \
- C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/FlexCAN.h \
+ C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/LPUART.h \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/ADC.h \
  C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/S32K144.h
 
@@ -45,7 +45,7 @@ C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/EWL_C/include/wchar_t.h:
 
 C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/clocks_and_modes.h:
 
-C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/FlexCAN.h:
+C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/LPUART.h:
 
 C:/Users/egon.osvath/Desktop/AutomotiveInternship/master/can_sensor_receiver/include/ADC.h:
 

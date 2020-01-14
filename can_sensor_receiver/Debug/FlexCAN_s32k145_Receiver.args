@@ -1,5 +1,6 @@
 "./src/main.o"
 "./include/clocks_and_modes.o"
+"./include/LPUART.o"
 "./include/LPSPI.o"
 "./include/FlexCAN.o"
 "./include/ADC.o"
