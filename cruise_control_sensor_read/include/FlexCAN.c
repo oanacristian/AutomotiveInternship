@@ -71,7 +71,6 @@ void FLEXCAN0_transmit_msg(void) { /* Assumption:  Message buffer CODE is INACTI
 }
 
 void FLEXCAN0_transmit_msg_ushort(unsigned short value) { /* Assumption:  Message buffer CODE is INACTIVE */
-  unsigned r=0;
   CAN0->IFLAG1 = 0x00000001;       /* Clear CAN 0 MB 0 flag without clearing others*/
 
   CAN0->RAMn[ 0*MSG_BUF_SIZE + 2] = value;//0xA5112233; /* MB0 word 2: data word 0 */

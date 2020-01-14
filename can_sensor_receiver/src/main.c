@@ -264,7 +264,6 @@ int main(void)
 	//  LPUART1_transmit_string("Running LPUART example\n\r");     /* Transmit char string */
 	//  LPUART1_transmit_string("Input character to echo...\n\r"); /* Transmit char string */
 	  unsigned char recieve_char;
-	  short mode = 1;
 	  for(;;) {
 		  if ((CAN0->IFLAG1 >> 4) & 1) {  /* If CAN 0 MB 4 flag is set (received msg), read MB4 */
 			  recieve_char = FLEXCAN0_receive_msg ();      /* Read message */
@@ -273,6 +272,17 @@ int main(void)
 			switch(recieve_char)
 			{
 			case 'd':
+				{
+					if(pwmSteering<= 665)
+					{
+						pwmSteering+=10;
+					}
+					else
+						pwmSteering = 665;
+//					PTD->PCOR |= 1<<PTD15;
+				}
+				break;
+			case 'D':
 				{
 					if(pwmSteering<= 665)
 					{
@@ -294,31 +304,67 @@ int main(void)
 //					PTD->PCOR |= 1<<PTD16;
 				}
 				break;
+			case 'B':
+				{
+					if(pwmSteering >= 330)
+					{
+						pwmSteering-=10;
+					}
+					else
+						pwmSteering = 330;
+//					PTD->PCOR |= 1<<PTD16;
+				}
+				break;
 			case 'a':
+					{
+						if(pwmSpeed <= 610)
 						{
-							if(pwmSpeed <= 610)
-							{
-								pwmSpeed+=10;
-							}
-							else
-								pwmSpeed = 610;
-							PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
-							PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
+							pwmSpeed+=10;
 						}
-						break;
+						else
+							pwmSpeed = 610;
+						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
+					}
+					break;
+			case 'A':
+					{
+						if(pwmSpeed <= 610)
+						{
+							pwmSpeed+=10;
+						}
+						else
+							pwmSpeed = 610;
+						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
+					}
+					break;
 			case 'c':
+					{
+						if(pwmSpeed >= 310)
 						{
-							if(pwmSpeed >= 310)
-							{
-								pwmSpeed-=10;
-							}
-							else
-								pwmSpeed = 310;
-
-							PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
-							PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
+							pwmSpeed-=10;
 						}
-						break;
+						else
+							pwmSpeed = 310;
+
+						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
+					}
+					break;
+			case 'C':
+					{
+						if(pwmSpeed >= 310)
+						{
+							pwmSpeed-=10;
+						}
+						else
+							pwmSpeed = 310;
+
+						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
+						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
+					}
+					break;
 			default :
 				{
 					pwmSpeed = 460;
@@ -327,21 +373,10 @@ int main(void)
 					PTD->PCOR |= 1<<PTD16;
 				}
 			}
-//			}
-//			if(recieve_char == 'f')
-//			{
-//				mode = 0;
-//			}
-//			if(recieve_char == 'e')
-//			{
-//				mode = 1;
-//			}
 		  }
   }
 }
 void LPIT0_Ch0_IRQHandler (void) {
-  LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
-  LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
   parity+=10;
   if(parity<pwmSteering)
   {
@@ -361,5 +396,6 @@ void LPIT0_Ch0_IRQHandler (void) {
   	  PTD->PCOR |= 1<<PTD11;
     }
   parity%=5000;
+  LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 
 }

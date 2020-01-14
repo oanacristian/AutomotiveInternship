@@ -65,7 +65,7 @@ void PORT_init (void) {
 }
 
  void send_distance(){
-	//LPUART1_transmit_char(last_distance_in_CMs);
+
 	if(last_distance_in_CMs<30)
 	{
 	FLEXCAN0_transmit_msg_ushort('c');
@@ -106,15 +106,6 @@ void WDOG_disable (void){
 }
 
 
-//Task* task_head;
-//Task* iterator;
-//Task* go_forward;
-//Task* go_backward;
-//Task* forward_backward_stay;
-//Task* center_stay;
-//Task* turn_left;
-//Task* turn_right;
-
 
 void update_lights(void)
 {
@@ -139,36 +130,6 @@ void update_lights(void)
 	}
 }
 
-
-//void init_tasks(void)
-//{
-//	task_head = (Task*)malloc(sizeof(Task));
-//	init_task(task_head,0U,ULTRASONIC_CLOCK_COUNT,&read_distance);
-//	add_task(task_head,task_head);
-//	iterator = (Task*)malloc(sizeof(Task));
-//	init_task(iterator,0U,ULTRASONIC_CLOCK_COUNT,&update_lights);
-//	add_task(task_head,iterator);
-////	iterator = (Task*)malloc(sizeof(Task));
-////	init_task(iterator,0U,get_clocks_in_milliseconds_80MHZ(ULTRASONIC_CLOCK_COUNT),&send_distance);
-////	add_task(task_head,iterator);
-//	go_forward = (Task*)malloc(sizeof(Task));
-//	init_task(go_forward,0U,TASK_UPDATE_CLOCK_COUNT,&motor_forward_PWM);
-////	add_task(task_head,go_forward);
-//	go_backward = (Task*)malloc(sizeof(Task));
-//	init_task(go_backward,0U,TASK_UPDATE_CLOCK_COUNT,&motor_backward_PWM);
-////	add_task(task_head,go_backward);
-//	turn_left = (Task*)malloc(sizeof(Task));
-//	init_task(turn_left,0U,TASK_UPDATE_CLOCK_COUNT,&motor_left_PWM);
-////	add_task(task_head,turn_left);
-//	turn_right= (Task*)malloc(sizeof(Task));
-//	init_task(turn_right,0U,TASK_UPDATE_CLOCK_COUNT,&motor_right_PWM);
-////	add_task(task_head,turn_right);
-//	forward_backward_stay = (Task*)malloc(sizeof(Task));
-//	init_task(forward_backward_stay,0U,TASK_UPDATE_CLOCK_COUNT,&forward_backward_stay_PWM);
-//
-//	center_stay = (Task*)malloc(sizeof(Task));
-//	init_task(center_stay,0U,TASK_UPDATE_CLOCK_COUNT,&left_right_stay_PWM);
-//}
 
 void NVIC_init_IRQs (void) {
   S32_NVIC->ICPR[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
@@ -195,8 +156,8 @@ void LPIT0_init (void) {
                               /* TRG_SEL=0: Timer chan 0 trigger source is selected*/
 }
 
-volatile char bt;
-volatile char mode;
+volatile unsigned short bt;
+volatile short mode;
 
 
 int main(void)
@@ -215,21 +176,15 @@ int main(void)
   for(;;) {
 	  bt = LPUART1_receive_char();
 
-	  if(bt == 'f')
+	  if(bt == 'f'|| bt == 'F')
 	  {
 		  mode = 0;
-//		  FLEXCAN0_transmit_msg_ushort(bt);
 
 	  }
-	  if(bt == 'e')
+	  if(bt == 'e' || bt == 'E')
 	  {
 		  mode = 1;
-//		  FLEXCAN0_transmit_msg_ushort(bt);
 
-	  }
-	  if(mode==1)
-	  {
-		  FLEXCAN0_transmit_msg_ushort(bt);
 	  }
   }
 }
@@ -240,6 +195,10 @@ void LPIT0_Ch0_IRQHandler (void) {
 	if(mode==0)
 	{
 		send_distance();
+	}
+	if(mode==1)
+	{
+	  FLEXCAN0_transmit_msg_ushort(LPUART1_receive_char());
 	}
 	LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 }

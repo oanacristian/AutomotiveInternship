@@ -513,7 +513,7 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
  .FlashConfig   0x00000400       0x10 ./Project_Settings/Startup_Code/startup_S32K144.o
                 0x00000410                . = ALIGN (0x4)
 
-.text           0x00000410      0x778
+.text           0x00000410      0x8a4
                 0x00000410                . = ALIGN (0x4)
  *(.text)
  .text          0x00000410       0x44 ./Project_Settings/Startup_Code/startup_S32K144.o
@@ -666,32 +666,32 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
  .text.NVIC_init_IRQs
                 0x000005ac       0x2c ./src/main.o
                 0x000005ac                NVIC_init_IRQs
- .text.main     0x000005d8      0x168 ./src/main.o
+ .text.main     0x000005d8      0x2a0 ./src/main.o
                 0x000005d8                main
  .text.LPIT0_Ch0_IRQHandler
-                0x00000740       0xbc ./src/main.o
-                0x00000740                LPIT0_Ch0_IRQHandler
+                0x00000878       0xb0 ./src/main.o
+                0x00000878                LPIT0_Ch0_IRQHandler
  .text.SOSC_init_8MHz
-                0x000007fc       0x4c ./include/clocks_and_modes.o
-                0x000007fc                SOSC_init_8MHz
+                0x00000928       0x4c ./include/clocks_and_modes.o
+                0x00000928                SOSC_init_8MHz
  .text.SPLL_init_160MHz
-                0x00000848       0x64 ./include/clocks_and_modes.o
-                0x00000848                SPLL_init_160MHz
+                0x00000974       0x64 ./include/clocks_and_modes.o
+                0x00000974                SPLL_init_160MHz
  .text.NormalRUNmode_80MHz
-                0x000008ac       0x2c ./include/clocks_and_modes.o
-                0x000008ac                NormalRUNmode_80MHz
+                0x000009d8       0x2c ./include/clocks_and_modes.o
+                0x000009d8                NormalRUNmode_80MHz
  .text.FLEXCAN0_init
-                0x000008d8       0xe8 ./include/FlexCAN.o
-                0x000008d8                FLEXCAN0_init
+                0x00000a04       0xe8 ./include/FlexCAN.o
+                0x00000a04                FLEXCAN0_init
  .text.FLEXCAN0_receive_msg
-                0x000009c0       0xa4 ./include/FlexCAN.o
-                0x000009c0                FLEXCAN0_receive_msg
+                0x00000aec       0xa4 ./include/FlexCAN.o
+                0x00000aec                FLEXCAN0_receive_msg
  .text.SystemInit
-                0x00000a64       0x30 ./Project_Settings/Startup_Code/system_S32K144.o
-                0x00000a64                SystemInit
+                0x00000b90       0x30 ./Project_Settings/Startup_Code/system_S32K144.o
+                0x00000b90                SystemInit
  .text.init_data_bss
-                0x00000a94       0xf4 ./Project_Settings/Startup_Code/startup.o
-                0x00000a94                init_data_bss
+                0x00000bc0       0xf4 ./Project_Settings/Startup_Code/startup.o
+                0x00000bc0                init_data_bss
  *(.rodata)
  *(.rodata*)
  *(.glue_7)
@@ -701,64 +701,64 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
  *(.eh_frame)
  *(.init)
  *(.fini)
-                0x00000b88                . = ALIGN (0x4)
+                0x00000cb4                . = ALIGN (0x4)
 
-.vfp11_veneer   0x00000b88        0x0
+.vfp11_veneer   0x00000cb4        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x00000b88        0x0
+.v4_bx          0x00000cb4        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x00000b88        0x0
+.iplt           0x00000cb4        0x0
  .iplt          0x00000000        0x0 C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_start.o
 
-.rel.dyn        0x00000b88        0x0
+.rel.dyn        0x00000cb4        0x0
  .rel.iplt      0x00000000        0x0 C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_start.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
 
-.ARM            0x00000b88        0x0
-                0x00000b88                __exidx_start = .
+.ARM            0x00000cb4        0x0
+                0x00000cb4                __exidx_start = .
  *(.ARM.exidx*)
-                0x00000b88                __exidx_end = .
+                0x00000cb4                __exidx_end = .
 
-.ctors          0x00000b88        0x0
-                0x00000b88                __CTOR_LIST__ = .
+.ctors          0x00000cb4        0x0
+                0x00000cb4                __CTOR_LIST__ = .
  *crtbegin.o(.ctors)
  *crtbegin?.o(.ctors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .ctors)
  *(SORT(.ctors.*))
  *(.ctors)
-                0x00000b88                __CTOR_END__ = .
+                0x00000cb4                __CTOR_END__ = .
 
-.dtors          0x00000b88        0x0
-                0x00000b88                __DTOR_LIST__ = .
+.dtors          0x00000cb4        0x0
+                0x00000cb4                __DTOR_LIST__ = .
  *crtbegin.o(.dtors)
  *crtbegin?.o(.dtors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .dtors)
  *(SORT(.dtors.*))
  *(.dtors)
-                0x00000b88                __DTOR_END__ = .
+                0x00000cb4                __DTOR_END__ = .
 
-.preinit_array  0x00000b88        0x0
-                0x00000b88                PROVIDE (__preinit_array_start, .)
+.preinit_array  0x00000cb4        0x0
+                0x00000cb4                PROVIDE (__preinit_array_start, .)
  *(.preinit_array*)
-                0x00000b88                PROVIDE (__preinit_array_end, .)
+                0x00000cb4                PROVIDE (__preinit_array_end, .)
 
-.init_array     0x00000b88        0x0
-                0x00000b88                PROVIDE (__init_array_start, .)
+.init_array     0x00000cb4        0x0
+                0x00000cb4                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  *(.init_array*)
-                0x00000b88                PROVIDE (__init_array_end, .)
+                0x00000cb4                PROVIDE (__init_array_end, .)
 
-.fini_array     0x00000b88        0x0
-                0x00000b88                PROVIDE (__fini_array_start, .)
+.fini_array     0x00000cb4        0x0
+                0x00000cb4                PROVIDE (__fini_array_start, .)
  *(SORT(.fini_array.*))
  *(.fini_array*)
-                0x00000b88                PROVIDE (__fini_array_end, .)
-                0x00000b88                __etext = .
-                0x00000b88                __DATA_ROM = .
+                0x00000cb4                PROVIDE (__fini_array_end, .)
+                0x00000cb4                __etext = .
+                0x00000cb4                __DATA_ROM = .
 
 .interrupts_ram
                 0x1fff8000      0x400
@@ -773,7 +773,7 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
                 0x1fff8000                __VECTOR_RAM = DEFINED (__flash_vector_table__)?ORIGIN (m_interrupts):__VECTOR_RAM__
                 0x00000400                __RAM_VECTOR_TABLE_SIZE = DEFINED (__flash_vector_table__)?0x0:(__interrupts_ram_end__ - __interrupts_ram_start__)
 
-.data           0x1fff8400        0x0 load address 0x00000b88
+.data           0x1fff8400        0x0 load address 0x00000cb4
                 0x1fff8400                . = ALIGN (0x4)
                 0x1fff8400                __DATA_RAM = .
                 0x1fff8400                __data_start__ = .
@@ -782,20 +782,20 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
  *(.jcr*)
                 0x1fff8400                . = ALIGN (0x4)
                 0x1fff8400                __data_end__ = .
-                0x00000b88                __DATA_END = (__DATA_ROM + (__data_end__ - __data_start__))
-                0x00000b88                __CODE_ROM = __DATA_END
+                0x00000cb4                __DATA_END = (__DATA_ROM + (__data_end__ - __data_start__))
+                0x00000cb4                __CODE_ROM = __DATA_END
 
 .igot.plt       0x1fff8400        0x0
  .igot.plt      0x00000000        0x0 C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_start.o
 
-.code           0x1fff8400        0x0 load address 0x00000b88
+.code           0x1fff8400        0x0 load address 0x00000cb4
                 0x1fff8400                . = ALIGN (0x4)
                 0x1fff8400                __CODE_RAM = .
                 0x1fff8400                __code_start__ = .
  *(.code_ram)
                 0x1fff8400                . = ALIGN (0x4)
                 0x1fff8400                __code_end__ = .
-                0x00000b88                __CODE_END = (__CODE_ROM + (__code_end__ - __code_start__))
+                0x00000cb4                __CODE_END = (__CODE_ROM + (__code_end__ - __code_start__))
 
 .customSectionBlock
  *(.customSection)
@@ -864,13 +864,13 @@ LOAD C:/NXP/S32DS_ARM_v2018.R1/S32DS/arm_ewl2/lib/armv7e-m/__arm_end.o
                 0x00000001                ASSERT ((__StackLimit >= __HeapLimit), region m_data_2 overflowed with stack and heap)
 OUTPUT(FlexCAN_s32k145_Receiver.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x1a82
- .debug_info    0x00000000      0x989 ./src/main.o
- .debug_info    0x00000989      0x269 ./include/clocks_and_modes.o
- .debug_info    0x00000bf2      0x4f7 ./include/FlexCAN.o
- .debug_info    0x000010e9      0x500 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_info    0x000015e9       0xae ./Project_Settings/Startup_Code/startup_S32K144.o
- .debug_info    0x00001697      0x3eb ./Project_Settings/Startup_Code/startup.o
+.debug_info     0x00000000     0x1a73
+ .debug_info    0x00000000      0x97a ./src/main.o
+ .debug_info    0x0000097a      0x269 ./include/clocks_and_modes.o
+ .debug_info    0x00000be3      0x4f7 ./include/FlexCAN.o
+ .debug_info    0x000010da      0x500 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_info    0x000015da       0xae ./Project_Settings/Startup_Code/startup_S32K144.o
+ .debug_info    0x00001688      0x3eb ./Project_Settings/Startup_Code/startup.o
 
 .debug_abbrev   0x00000000      0x5df
  .debug_abbrev  0x00000000      0x19e ./src/main.o
@@ -927,24 +927,24 @@ OUTPUT(FlexCAN_s32k145_Receiver.elf elf32-littlearm)
  .debug_macro   0x0000fc19       0x22 ./Project_Settings/Startup_Code/system_S32K144.o
  .debug_macro   0x0000fc3b       0xea ./Project_Settings/Startup_Code/startup.o
 
-.debug_line     0x00000000      0xd21
- .debug_line    0x00000000      0x33b ./src/main.o
- .debug_line    0x0000033b      0x1f9 ./include/clocks_and_modes.o
- .debug_line    0x00000534      0x22b ./include/FlexCAN.o
- .debug_line    0x0000075f      0x2bd ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_line    0x00000a1c       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
- .debug_line    0x00000a9f      0x282 ./Project_Settings/Startup_Code/startup.o
+.debug_line     0x00000000      0xd35
+ .debug_line    0x00000000      0x34f ./src/main.o
+ .debug_line    0x0000034f      0x1f9 ./include/clocks_and_modes.o
+ .debug_line    0x00000548      0x22b ./include/FlexCAN.o
+ .debug_line    0x00000773      0x2bd ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_line    0x00000a30       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
+ .debug_line    0x00000ab3      0x282 ./Project_Settings/Startup_Code/startup.o
 
-.debug_str      0x00000000    0x62a3d
- .debug_str     0x00000000    0x5dfcf ./src/main.o
-                              0x5e07e (size before relaxing)
- .debug_str     0x0005dfcf       0xd5 ./include/clocks_and_modes.o
+.debug_str      0x00000000    0x62a38
+ .debug_str     0x00000000    0x5dfca ./src/main.o
+                              0x5e079 (size before relaxing)
+ .debug_str     0x0005dfca       0xd5 ./include/clocks_and_modes.o
                               0x5dd80 (size before relaxing)
- .debug_str     0x0005e0a4       0xa8 ./include/FlexCAN.o
+ .debug_str     0x0005e09f       0xa8 ./include/FlexCAN.o
                               0x5de82 (size before relaxing)
- .debug_str     0x0005e14c     0x47d1 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_str     0x0005e147     0x47d1 ./Project_Settings/Startup_Code/system_S32K144.o
                               0x62505 (size before relaxing)
- .debug_str     0x0006291d      0x120 ./Project_Settings/Startup_Code/startup.o
+ .debug_str     0x00062918      0x120 ./Project_Settings/Startup_Code/startup.o
                               0x6243c (size before relaxing)
 
 .comment        0x00000000       0x70
