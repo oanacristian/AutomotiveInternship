@@ -356,10 +356,15 @@ int main(void)
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
 					}
 					break;
+			case 'g':
+				pwmSteering = 480;
+				break;
+			case 'G':
+				pwmSteering = 480;
+				break;
 			default :
 				{
 					pwmSpeed = 460;
-					pwmSteering = 480;
 					PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 					PTD->PCOR |= 1<<PTD16;
 				}
