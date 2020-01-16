@@ -308,36 +308,36 @@ int main(void)
 				break;
 			case 'a':
 					{
-						if(pwmSpeed <= 610)
+						if(pwmSpeed <= 485)
 						{
 							pwmSpeed+=10;
 						}
 						else
-							pwmSpeed = 610;
+							pwmSpeed = 485;
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
 					}
 					break;
 			case 'A':
 					{
-						if(pwmSpeed <= 610)
+						if(pwmSpeed <= 485)
 						{
 							pwmSpeed+=10;
 						}
 						else
-							pwmSpeed = 610;
+							pwmSpeed = 485;
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
 					}
 					break;
 			case 'c':
 					{
-						if(pwmSpeed >= 310)
+						if(pwmSpeed >= 420)
 						{
 							pwmSpeed-=10;
 						}
 						else
-							pwmSpeed = 310;
+							pwmSpeed = 420;
 
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
@@ -345,12 +345,12 @@ int main(void)
 					break;
 			case 'C':
 					{
-						if(pwmSpeed >= 310)
+						if(pwmSpeed >= 420)
 						{
 							pwmSpeed-=10;
 						}
 						else
-							pwmSpeed = 310;
+							pwmSpeed = 420;
 
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
