@@ -1,101 +1,3 @@
-/*
- main.c                              Copyright NXP 2016
- * Description: Simple CAN 2.0 transmit / receive at 500 K baud
- *              for S32K144
- * 2016 Jul 22 S. Mihalik - Initial version
- * 2016 Sep 12 SM - Updated with SBC init, Node A - B communication
- * 2016 Oct 31 SM- Clocks adjusted for 160 MHz SPLL, updated loop logic
- * 2017 Jul 03 SM- Removed code for: MC33903 on obsolete EVB,
- *                 initial transmit for node B, tx_msg_count
-
-
-#include "S32K144.h"  include peripheral declarations S32K144
-#include "FlexCAN.h"
-#include "clocks_and_modes.h"
-
-void WDOG_disable (void){
-  WDOG->CNT=0xD928C520; 	 Unlock watchdog
-  WDOG->TOVAL=0x0000FFFF;	 Maximum timeout value
-  WDOG->CS = 0x00002100;     Disable watchdog
-}
-void turn_on_BLUE_LED(void)
-{
-	PTD->PCOR |=  1<<0;
-}
-
-void turn_on_GREEN_LED(void)
-{
-	PTD->PCOR |=  1<<16;
-}
-
-void turn_on_RED_LED(void)
-{
-	PTD->PCOR |=  1<<15;
-}
-void turn_off_all_LEDs(void)
-{
-	PTD->PSOR |=  1<<16|1<<15|1<<0;
-}
-void PORT_init (void) {
-  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  Enable clock for PORTE
-  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK;  Enable clock for PORTC
-  PORTE->PCR[4] |= PORT_PCR_MUX(5);  Port E4: MUX = ALT5, CAN0_RX
-  PORTE->PCR[5] |= PORT_PCR_MUX(5);  Port E5: MUX = ALT5, CAN0_TX
-  PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;    Enable clock for PORTD
-  PORTD->PCR[15] =  0x00000100;      Port D16: MUX = GPIO (to green LED)
-  PTD->PDDR |= 1<<15;                Port D16: Data direction = output
-  PORTD->PCR[0] =  0x00000100;      Port D16: MUX = GPIO (to green LED)
-   PTD->PDDR |= 1<<0;                Port D16: Data direction = output
-  PORTD->PCR[16] =  0x00000100;      Port D16: MUX = GPIO (to green LED)
-  PTD->PDDR |= 1<<16;                Port D16: Data direction = output
-  PTD->PTOR |= 1<<0|1<<16|1<<15;
-
-
-}
-volatile char value;
-int main(void) {
-  uint32_t rx_msg_count = 0;
-  char msg = 0;
-
-  WDOG_disable();
-  SOSC_init_8MHz();        Initialize system oscillator for 8 MHz xtal
-  SPLL_init_160MHz();      Initialize SPLL to 160 MHz with 8 MHz SOSC
-  NormalRUNmode_80MHz();   Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash
-
-  FLEXCAN0_init();          Init FlexCAN0
-  PORT_init();              Configure ports
-
-  for (;;) {                         Loop: if a msg is received, transmit a msg
-    if ((CAN0->IFLAG1 >> 4) & 1) {   If CAN 0 MB 4 flag is set (received msg), read MB4
-      value = FLEXCAN0_receive_msg ();       Read message
-      rx_msg_count++;                Increment receive msg counter
-
-      if(rx_msg_count==1000){
-    	  switch(value){
-		  case 0:
-			  turn_off_all_LEDs();
-			  turn_on_BLUE_LED();
-			  break;
-		  case 15:
-			  turn_off_all_LEDs();
-			  turn_on_RED_LED();
-			  break;
-		  case 16:
-			  turn_off_all_LEDs();
-			  turn_on_GREEN_LED();
-			  break;
-		  default:
-			  turn_off_all_LEDs();
-			  break;
-    	  }
-    	  rx_msg_count=0;
-      	}
-      }
-      }
-    }
-*/
-
-
 #include "S32K144.h" /* include peripheral declarations S32K144 */
 #include "clocks_and_modes.h"
 #include "LPUART.h"
@@ -107,6 +9,19 @@ int main(void) {
 #define PTD10 10    //output PWMsteering
 #define PTD11 11	//output PWMspeed
 #define period 256
+#define PTE16 16
+#define PTE15 15
+#define PTE14 14
+#define PTE13 13
+#define PTE1 1
+#define PTD7 7
+#define PTD6 6
+#define PTC15 15
+#define PTE1 1
+#define PTA0 0
+#define PTA1 1
+#define PTA7 7
+#define PTB13 13
 
   uint32_t adcResultInMv_pot = 0;
   uint32_t adcResultInMv_Vrefsh = 0;
@@ -114,6 +29,8 @@ int main(void) {
 //  unsigned char volatile pwm = 0;
   unsigned short volatile parity = 0;
   unsigned short volatile state = 1;
+  unsigned volatile char turn_signals_left = 0, turn_signals_right = 0;
+  unsigned volatile char led = 0;
 
  unsigned long get_clocks_in_milliseconds(unsigned int milliseconds)
  {
@@ -198,6 +115,10 @@ int main(void) {
 
 void PORT_init (void) {
   PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTD */
+  PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+  PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+  PCC->PCCn[PCC_PORTB_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+
 //  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  //Enable clock for PORTE
 //  PORTE->PCR[4] |= PORT_PCR_MUX(5);  //Port E4: MUX = ALT5, CAN0_RX
 //  PORTE->PCR[5] |= PORT_PCR_MUX(5);  //Port E5: MUX = ALT5, CAN0_TX
@@ -216,6 +137,30 @@ void PORT_init (void) {
  PCC-> PCCn[PCC_PORTC_INDEX] |=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
  PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
  PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
+
+ PTE->PDDR |= 1<<PTE16;       	  /* Port D0:  Data Direction= output */
+ PORTE->PCR[PTE16] =   0x00000100;  /* Port D0:  MUX = ALT1, GPIO (to blue LED on EVB) */
+ PTE->PDDR |= 1<<PTE15;          /* Port D15: Data Direction= output */
+ PORTE->PCR[PTE15] =  0x00000100;  /* Port D15: MUX = GPIO */
+ PTE->PDDR |= 1<<PTE14;          /* Port D16: Data Direction= output */
+ PORTE->PCR[PTE14] =  0x00000100;  /* Port D16: MUX = GPIO */
+ PTE->PDDR |= 1<<PTE13;          /* Port D16: Data Direction= output */
+ PORTE->PCR[PTE13] =  0x00000100;  /* Port D16: MUX = GPIO */
+ PTE->PDDR |= 1<<PTE1;          /* Port D16: Data Direction= output */
+ PORTE->PCR[PTE1] =  0x00000100;  /* Port D16: MUX = GPIO */
+
+ PTC->PDDR |= 1<<PTC15;          /* Port D16: Data Direction= output */
+ PORTC->PCR[PTC15] =  0x00000100;  /* Port D16: MUX = GPIO */
+
+ PTA->PDDR |= 1<<PTA1;          /* Port D16: Data Direction= output */
+ PORTA->PCR[PTA1] =  0x00000100;  /* Port D16: MUX = GPIO */
+ PTA->PDDR |= 1<<PTA0;          /* Port D16: Data Direction= output */
+ PORTA->PCR[PTA0] =  0x00000100;  /* Port D16: MUX = GPIO */
+ PTA->PDDR |= 1<<PTA7;          /* Port D16: Data Direction= output */
+ PORTA->PCR[PTA7] =  0x00000100;  /* Port D16: MUX = GPIO */
+
+ PTB->PDDR |= 1<<PTB13;          /* Port D16: Data Direction= output */
+ PORTB->PCR[PTB13] =  0x00000100;  /* Port D16: MUX = GPIO */
 
 
 }
@@ -258,6 +203,11 @@ int main(void)
 	  for(;;) {
 
 			  recieve_char = LPUART1_receive_char();      /* Read message */
+			  	PTA-> PCOR |= 1<<PTA1; //turn off breaks
+			    PTB-> PSOR |= 1<<PTB13; // turn on la pozitzii
+
+				turn_signals_left = 0; //turn on turn signals
+				turn_signals_right = 1;
 
 //			if(mode == 1){
 			switch(recieve_char)
@@ -272,6 +222,10 @@ int main(void)
 						pwmSteering = 665;
 //					PTD->PCOR |= 1<<PTD15;
 				}
+
+				//Aici virez stanga => turn on left leds
+				turn_signals_left = 1;
+
 				break;
 			case 'D':
 				{
@@ -283,6 +237,8 @@ int main(void)
 						pwmSteering = 665;
 //					PTD->PCOR |= 1<<PTD15;
 				}
+				//Aici virez stanga => turn on left leds
+				turn_signals_left = 1;
 				break;
 			case 'b':
 				{
@@ -294,6 +250,8 @@ int main(void)
 						pwmSteering = 330;
 //					PTD->PCOR |= 1<<PTD16;
 				}
+				//Aici virez dreapta => turn on right leds
+				turn_signals_right = 1;
 				break;
 			case 'B':
 				{
@@ -304,7 +262,12 @@ int main(void)
 					else
 						pwmSteering = 330;
 //					PTD->PCOR |= 1<<PTD16;
+
 				}
+
+				//Aici virez dreapta => turn on right leds
+				turn_signals_right = 1;
+
 				break;
 			case 'a':
 					{
@@ -317,6 +280,10 @@ int main(void)
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
 					}
+
+					//Aici merge in fata => faza scurta on
+					PTA-> PSOR |= 1<<PTA7; //turn on la faza scurta
+
 					break;
 			case 'A':
 					{
@@ -329,6 +296,9 @@ int main(void)
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
 					}
+					//Aici merge in fata => faza scurta on
+					PTA-> PSOR |= 1<<PTA7; //turn on la faza scurta
+
 					break;
 			case 'c':
 					{
@@ -342,6 +312,11 @@ int main(void)
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
 					}
+
+					//Aici merge cu spatele => aprind reverse
+					PTA-> PSOR |= 1<<PTA0; //turn on reverse lights
+
+
 					break;
 			case 'C':
 					{
@@ -355,23 +330,41 @@ int main(void)
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
 					}
+
+					//Aici merge cu spatele => aprind reverse
+					PTA-> PSOR |= 1<<PTA0; //turn on reverse lights
+
+
 					break;
 			case 'g':
 				pwmSteering = 480;
+				turn_signals_left = 0; //turn off turn signals
+				turn_signals_right = 0;
 				break;
 			case 'G':
 				pwmSteering = 480;
+				turn_signals_left = 0; //turn off turn signals
+				turn_signals_right = 0;
 				break;
 			default :
 				{
 					pwmSpeed = 460;
 					PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 					PTD->PCOR |= 1<<PTD16;
+					//Aici sta pe loc => aprind breaks & sting faza scurta & sting reverse & sting signals
+					PTA-> PSOR |= 1<<PTA1; //turn on breaks
+					PTA-> PCOR |= 1<<PTA7; //turn off faza scurta
+					PTA-> PCOR |= 1<<PTA0; //turn off reverse lights
+					turn_signals_left = 0; //turn off turn signals
+					turn_signals_right = 0;
 				}
 			}
 
   }
 }
+
+uint32_t index_left, index_right;
+
 void LPIT0_Ch0_IRQHandler (void) {
   parity+=10;
   if(parity<pwmSteering)
@@ -392,6 +385,73 @@ void LPIT0_Ch0_IRQHandler (void) {
   	  PTD->PCOR |= 1<<PTD11;
     }
   parity%=5000;
+
+//turn signals with shift
+  if(turn_signals_left == 0){
+	  index_left++;
+	   if(index_left<6250)
+	   {
+		   PTE-> PSOR |= 1<<PTE16;
+	   }
+	   else
+	   {
+		   if(index_left<12500)
+		   {
+			   PTE-> PSOR |= 1<<PTE15;
+		   }
+		   else
+		   {
+			   if(index_left<18750)
+			   {
+				   PTE-> PSOR |= 1<<PTE14;
+			   }
+			   else
+			   {
+			   if(index_left<25000)
+			   {
+				  PTE-> PSOR |= 1<<PTE13;
+			   }
+			   else
+			   {
+				   if(index_left<31250)
+				   {
+					   PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13; index_left = 0;
+				   }
+			   }
+		   }
+		}
+	   }
+  	  }
+	else
+		{
+		  PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13;
+		  index_left = 0;
+		}
+
+  if(turn_signals_right == 1){
+	  switch(led){
+	  case 0: PTE-> PSOR |= 1<<PTE1; led++; break;
+	  case 1: PTD-> PSOR |= 1<<PTD7; led++; break;
+	  case 2: PTD-> PSOR |= 1<<PTD6; led++; break;
+	  case 3: PTC-> PSOR |= 1<<PTC15; led++; break;
+	  case 4: PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
+	  	  	  PTE-> PCOR |= 1<<PTE1;
+	  	  	  PTC-> PCOR |= 1<<PTC15;
+	  	  	  led = 0;break;
+	  default: PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
+	  	  	  PTE-> PCOR |= 1<<PTE1;
+	  	  	  PTC-> PCOR |= 1<<PTC15;
+	  	  	  led = 0; break;
+	  }
+  }
+  else{
+	  PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
+	  PTE-> PCOR |= 1<<PTE1;
+	  PTC-> PCOR |= 1<<PTC15;
+	  led = 0;
+  }
+
+
   LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 
 }
