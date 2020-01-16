@@ -206,9 +206,6 @@ int main(void)
 			  	PTA-> PCOR |= 1<<PTA1; //turn off breaks
 			    PTB-> PSOR |= 1<<PTB13; // turn on la pozitzii
 
-				turn_signals_left = 0; //turn on turn signals
-				turn_signals_right = 1;
-
 //			if(mode == 1){
 			switch(recieve_char)
 			{
@@ -221,12 +218,13 @@ int main(void)
 					else
 						pwmSteering = 665;
 //					PTD->PCOR |= 1<<PTD15;
+					turn_signals_left = 1;
+
+					break;
 				}
 
 				//Aici virez stanga => turn on left leds
-				turn_signals_left = 1;
 
-				break;
 			case 'D':
 				{
 					if(pwmSteering<= 665)
@@ -236,10 +234,11 @@ int main(void)
 					else
 						pwmSteering = 665;
 //					PTD->PCOR |= 1<<PTD15;
+					//Aici virez stanga => turn on left leds
+					turn_signals_left = 1;
+					break;
 				}
-				//Aici virez stanga => turn on left leds
-				turn_signals_left = 1;
-				break;
+
 			case 'b':
 				{
 					if(pwmSteering >= 330)
@@ -249,10 +248,11 @@ int main(void)
 					else
 						pwmSteering = 330;
 //					PTD->PCOR |= 1<<PTD16;
+					//Aici virez dreapta => turn on right leds
+					turn_signals_right = 1;
+					break;
 				}
-				//Aici virez dreapta => turn on right leds
-				turn_signals_right = 1;
-				break;
+
 			case 'B':
 				{
 					if(pwmSteering >= 330)
@@ -262,13 +262,13 @@ int main(void)
 					else
 						pwmSteering = 330;
 //					PTD->PCOR |= 1<<PTD16;
+					//Aici virez dreapta => turn on right leds
+					turn_signals_right = 1;
 
+					break;
 				}
 
-				//Aici virez dreapta => turn on right leds
-				turn_signals_right = 1;
 
-				break;
 			case 'a':
 					{
 						if(pwmSpeed <= 485)
@@ -279,12 +279,13 @@ int main(void)
 							pwmSpeed = 485;
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
+						//Aici merge in fata => faza scurta on
+						PTA-> PSOR |= 1<<PTA7; //turn on la faza scurta
+
+						break;
 					}
 
-					//Aici merge in fata => faza scurta on
-					PTA-> PSOR |= 1<<PTA7; //turn on la faza scurta
 
-					break;
 			case 'A':
 					{
 						if(pwmSpeed <= 485)
@@ -295,11 +296,12 @@ int main(void)
 							pwmSpeed = 485;
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD0;  /* Turn on LED blue */
-					}
-					//Aici merge in fata => faza scurta on
-					PTA-> PSOR |= 1<<PTA7; //turn on la faza scurta
+						//Aici merge in fata => faza scurta on
+						PTA-> PSOR |= 1<<PTA7; //turn on la faza scurta
 
-					break;
+						break;
+					}
+;
 			case 'c':
 					{
 						if(pwmSpeed >= 420)
@@ -311,13 +313,14 @@ int main(void)
 
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
+						//Aici merge cu spatele => aprind reverse
+						PTA-> PSOR |= 1<<PTA0; //turn on reverse lights
+
+
+						break;
 					}
 
-					//Aici merge cu spatele => aprind reverse
-					PTA-> PSOR |= 1<<PTA0; //turn on reverse lights
 
-
-					break;
 			case 'C':
 					{
 						if(pwmSpeed >= 420)
@@ -329,13 +332,12 @@ int main(void)
 
 						PTD->PSOR |=  1<<PTD16|1<<PTD15|1<<PTD0; /* Turn off all LEDs */
 						PTD->PCOR |= 1<<PTD15;  /* Turn on LED green */
+
+						//Aici merge cu spatele => aprind reverse
+						PTA-> PSOR |= 1<<PTA0; //turn on reverse lights
+						break;
 					}
 
-					//Aici merge cu spatele => aprind reverse
-					PTA-> PSOR |= 1<<PTA0; //turn on reverse lights
-
-
-					break;
 			case 'g':
 				pwmSteering = 480;
 				turn_signals_left = 0; //turn off turn signals
@@ -387,7 +389,7 @@ void LPIT0_Ch0_IRQHandler (void) {
   parity%=5000;
 
 //turn signals with shift
-  if(turn_signals_left == 0){
+  if(turn_signals_left == 1){
 	  index_left++;
 	   if(index_left<6250)
 	   {
@@ -407,50 +409,74 @@ void LPIT0_Ch0_IRQHandler (void) {
 			   }
 			   else
 			   {
-			   if(index_left<25000)
-			   {
-				  PTE-> PSOR |= 1<<PTE13;
-			   }
-			   else
-			   {
-				   if(index_left<31250)
+				   if(index_left<25000)
 				   {
-					   PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13; index_left = 0;
+					  PTE-> PSOR |= 1<<PTE13;
+				   }
+				   else
+				   {
+					   if(index_left<31250)
+					   {
+						   PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13;
+						   index_left = 0;
+					   }
 				   }
 			   }
 		   }
-		}
 	   }
   	  }
-	else
+		else
 		{
-		  PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13;
-		  index_left = 0;
+		PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13;
+		index_left = 0;
 		}
 
   if(turn_signals_right == 1){
-	  switch(led){
-	  case 0: PTE-> PSOR |= 1<<PTE1; led++; break;
-	  case 1: PTD-> PSOR |= 1<<PTD7; led++; break;
-	  case 2: PTD-> PSOR |= 1<<PTD6; led++; break;
-	  case 3: PTC-> PSOR |= 1<<PTC15; led++; break;
-	  case 4: PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
-	  	  	  PTE-> PCOR |= 1<<PTE1;
-	  	  	  PTC-> PCOR |= 1<<PTC15;
-	  	  	  led = 0;break;
-	  default: PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
-	  	  	  PTE-> PCOR |= 1<<PTE1;
-	  	  	  PTC-> PCOR |= 1<<PTC15;
-	  	  	  led = 0; break;
-	  }
-  }
-  else{
-	  PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
-	  PTE-> PCOR |= 1<<PTE1;
-	  PTC-> PCOR |= 1<<PTC15;
-	  led = 0;
-  }
 
+	  index_right++;
+	  	   if(index_left<6250)
+	  	   {
+	  		   PTE-> PSOR |= 1<<PTE1;
+	  	   }
+	  	   else
+	  	   {
+	  		   if(index_left<12500)
+	  		   {
+	  			   PTD-> PSOR |= 1<<PTD7;
+	  		   }
+	  		   else
+	  		   {
+	  			   if(index_left<18750)
+	  			   {
+	  				   PTD-> PSOR |= 1<<PTD6;
+	  			   }
+	  			   else
+	  			   {
+	  			   if(index_left<25000)
+	  			   {
+	  				  PTC-> PSOR |= 1<<PTC15;
+	  			   }
+	  			   else
+	  			   {
+	  				   if(index_left<31250)
+	  				   {
+	  					 PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
+	  					 PTE-> PCOR |= 1<<PTE1;
+	  					 PTC-> PCOR |= 1<<PTC15;
+	  					 index_right = 0;
+	  				   }
+	  			   }
+	  		   }
+	  		}
+	  	   }
+	    }
+	  	else
+		{
+			PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
+			PTE-> PCOR |= 1<<PTE1;
+			PTC-> PCOR |= 1<<PTC15;
+			index_right = 0;
+		}
 
   LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
 
