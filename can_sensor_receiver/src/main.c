@@ -9,28 +9,24 @@
 #define PTD10 10    //output PWMsteering
 #define PTD11 11	//output PWMspeed
 #define period 256
-#define PTE16 16
-#define PTE15 15
-#define PTE14 14
-#define PTE13 13
-#define PTE1 1
-#define PTD7 7
-#define PTD6 6
-#define PTC15 15
-#define PTE1 1
-#define PTA0 0
-#define PTA1 1
-#define PTA7 7
-#define PTB13 13
+#define PTE16 16 // left index 1
+#define PTE15 15 // left index 2
+#define PTE14 14 // left index 3
+#define PTE12 12 // left index 4
+#define PTD7 7 // right index 2
+#define PTD6 6 // right index 3
+#define PTC15 15 // right index 4
+#define PTE1 1 // right index 1
+#define PTA0 0 //reverse
+#define PTA1 1 //break lights
+#define PTA7 7 //faza scurta
+#define PTB13 13 //pozitie
 
-  uint32_t adcResultInMv_pot = 0;
-  uint32_t adcResultInMv_Vrefsh = 0;
 
 //  unsigned char volatile pwm = 0;
   unsigned short volatile parity = 0;
   unsigned short volatile state = 1;
   unsigned volatile char turn_signals_left = 0, turn_signals_right = 0;
-  unsigned volatile char led = 0;
 
  unsigned long get_clocks_in_milliseconds(unsigned int milliseconds)
  {
@@ -114,10 +110,11 @@
   }
 
 void PORT_init (void) {
-  PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   /* Enable clock for PORTD */
-  PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-  PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-  PCC->PCCn[PCC_PORTB_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+  PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTA */
+  PCC->PCCn[PCC_PORTB_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+  PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTD */
+  PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
 
 //  PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK;  //Enable clock for PORTE
 //  PORTE->PCR[4] |= PORT_PCR_MUX(5);  //Port E4: MUX = ALT5, CAN0_RX
@@ -127,14 +124,18 @@ void PORT_init (void) {
   PORTD->PCR[PTD16] =  0x00000100;  /* Port D16: MUX = GPIO */
   PORTD->PCR[PTD10] =  0x00000100;  /* Port D16: MUX = GPIO */
   PORTD->PCR[PTD11] =  0x00000100;  /* Port D16: MUX = GPIO */
+  PORTD->PCR[PTD6] =  0x00000100;  /* Port D16: MUX = GPIO */
+  PORTD->PCR[PTD7] =  0x00000100;  /* Port D16: MUX = GPIO */
+
 
   PTD->PDDR |= 1<<PTD0;       	  /* Port D0:  Data Direction= output */
   PTD->PDDR |= 1<<PTD15;          /* Port D15: Data Direction= output */
   PTD->PDDR |= 1<<PTD16;          /* Port D16: Data Direction= output */
   PTD->PDDR |= 1<<PTD10;
   PTD->PDDR |= 1<<PTD11;
+  PTD->PDDR |= 1<<PTD6;
+  PTD->PDDR |= 1<<PTD7;
   /* Enable clocks to peripherals (PORT modules) */
- PCC-> PCCn[PCC_PORTC_INDEX] |=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
  PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
  PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
 
@@ -144,8 +145,8 @@ void PORT_init (void) {
  PORTE->PCR[PTE15] =  0x00000100;  /* Port D15: MUX = GPIO */
  PTE->PDDR |= 1<<PTE14;          /* Port D16: Data Direction= output */
  PORTE->PCR[PTE14] =  0x00000100;  /* Port D16: MUX = GPIO */
- PTE->PDDR |= 1<<PTE13;          /* Port D16: Data Direction= output */
- PORTE->PCR[PTE13] =  0x00000100;  /* Port D16: MUX = GPIO */
+ PTE->PDDR |= 1<<PTE12;          /* Port D16: Data Direction= output */
+ PORTE->PCR[PTE12] =  0x00000100;  /* Port D16: MUX = GPIO */
  PTE->PDDR |= 1<<PTE1;          /* Port D16: Data Direction= output */
  PORTE->PCR[PTE1] =  0x00000100;  /* Port D16: MUX = GPIO */
 
@@ -199,12 +200,15 @@ int main(void)
 	  LPUART1_init();        /* Initialize LPUART @ 9600*/
 	//  LPUART1_transmit_string("Running LPUART example\n\r");     /* Transmit char string */
 	//  LPUART1_transmit_string("Input character to echo...\n\r"); /* Transmit char string */
-	  unsigned char recieve_char;
+	  unsigned volatile char recieve_char;
+//	  turn_signals_left = 1;
+//	  turn_signals_right = 1;
+	  PTB-> PSOR |= 1<<PTB13; // turn on la pozitzii
 	  for(;;) {
 
 			  recieve_char = LPUART1_receive_char();      /* Read message */
-			  	PTA-> PCOR |= 1<<PTA1; //turn off breaks
-			    PTB-> PSOR |= 1<<PTB13; // turn on la pozitzii
+
+
 
 //			if(mode == 1){
 			switch(recieve_char)
@@ -271,6 +275,7 @@ int main(void)
 
 			case 'a':
 					{
+						PTA-> PCOR |= 1<<PTA1; //turn off breaks
 						if(pwmSpeed <= 485)
 						{
 							pwmSpeed+=10;
@@ -288,6 +293,7 @@ int main(void)
 
 			case 'A':
 					{
+						PTA-> PCOR |= 1<<PTA1; //turn off breaks
 						if(pwmSpeed <= 485)
 						{
 							pwmSpeed+=10;
@@ -304,6 +310,7 @@ int main(void)
 ;
 			case 'c':
 					{
+						PTA-> PCOR |= 1<<PTA1; //turn off breaks
 						if(pwmSpeed >= 420)
 						{
 							pwmSpeed-=10;
@@ -323,6 +330,7 @@ int main(void)
 
 			case 'C':
 					{
+						PTA-> PCOR |= 1<<PTA1; //turn off breaks
 						if(pwmSpeed >= 420)
 						{
 							pwmSpeed-=10;
@@ -365,7 +373,7 @@ int main(void)
   }
 }
 
-uint32_t index_left, index_right;
+volatile uint32_t index_left, index_right;
 
 void LPIT0_Ch0_IRQHandler (void) {
   parity+=10;
@@ -411,15 +419,20 @@ void LPIT0_Ch0_IRQHandler (void) {
 			   {
 				   if(index_left<25000)
 				   {
-					  PTE-> PSOR |= 1<<PTE13;
+					  PTE-> PSOR |= 1<<PTE12;
 				   }
 				   else
 				   {
 					   if(index_left<31250)
 					   {
-						   PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13;
-						   index_left = 0;
+						   PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE12;
 					   }
+					   else
+	  				   {
+	  					   if(index_left<37500){
+	  						 index_left = 0;
+	  					   }
+	  				   }
 				   }
 			   }
 		   }
@@ -427,43 +440,49 @@ void LPIT0_Ch0_IRQHandler (void) {
   	  }
 		else
 		{
-		PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE13;
+		PTE-> PCOR |= 1<<PTE16 | 1<<PTE15 | 1<<PTE14 | 1<<PTE12;
 		index_left = 0;
 		}
 
   if(turn_signals_right == 1){
 
 	  index_right++;
-	  	   if(index_left<6250)
+	  	   if(index_right<6250)
 	  	   {
 	  		   PTE-> PSOR |= 1<<PTE1;
 	  	   }
 	  	   else
 	  	   {
-	  		   if(index_left<12500)
+	  		   if(index_right<12500)
 	  		   {
 	  			   PTD-> PSOR |= 1<<PTD7;
 	  		   }
 	  		   else
 	  		   {
-	  			   if(index_left<18750)
+	  			   if(index_right<18750)
 	  			   {
 	  				   PTD-> PSOR |= 1<<PTD6;
 	  			   }
 	  			   else
 	  			   {
-	  			   if(index_left<25000)
+	  			   if(index_right<25000)
 	  			   {
 	  				  PTC-> PSOR |= 1<<PTC15;
 	  			   }
 	  			   else
 	  			   {
-	  				   if(index_left<31250)
+	  				   if(index_right<31250)
 	  				   {
 	  					 PTD-> PCOR |= 1<<PTD7 | 1<<PTD6;
 	  					 PTE-> PCOR |= 1<<PTE1;
 	  					 PTC-> PCOR |= 1<<PTC15;
-	  					 index_right = 0;
+
+	  				   }
+	  				   else
+	  				   {
+	  					   if(index_right<37500){
+	  						 index_right = 0;
+	  					   }
 	  				   }
 	  			   }
 	  		   }
